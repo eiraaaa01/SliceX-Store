@@ -23,7 +23,7 @@ export function FallingEmojis() {
       emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
       x: Math.random() * 100,
       duration: 5 + Math.random() * 10,
-      delay: Math.random() * 10,
+      delay: Math.random() * -15,
       size: 1 + Math.random() * 1.5,
     }));
     setEmojis(generatedEmojis);
