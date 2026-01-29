@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "./ui/separator";
 import { useState } from "react";
 import { useAuth } from "@/firebase/provider";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -37,6 +37,31 @@ export default function LoginForm() {
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    if (!auth) {
+        setError("Auth service not available.");
+        return;
+    }
+
+    setIsSubmitting(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      router.push('/dashboard');
+    } catch (error: any) {
+      setError(error.message);
+       toast({
+        variant: "destructive",
+        title: "Sign In Failed",
+        description: error.message,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +97,7 @@ export default function LoginForm() {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" type="button" onClick={handleGoogleSignIn} disabled={isSubmitting}>
             <GoogleIcon className="mr-2" />
             Sign in with Google
           </Button>
