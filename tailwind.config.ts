@@ -88,7 +88,7 @@ export default {
             height: '0',
           },
         },
-        fall: {
+        snowfall: {
           '0%': { transform: 'translateY(-20vh) rotate(0deg)' },
           '100%': { transform: 'translateY(120vh) rotate(360deg)' },
         },
@@ -106,7 +106,7 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        fall: 'fall linear infinite',
+        snowfall: 'snowfall linear infinite',
         flicker: 'flicker 2s ease-in-out infinite',
       },
       dropShadow: {

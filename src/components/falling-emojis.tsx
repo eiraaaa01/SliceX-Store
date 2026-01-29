@@ -2,53 +2,53 @@
 
 import { useState, useEffect } from "react";
 
-const EMOJIS = ["🚀", "👍", "❤️", "🔥", "📈", "✨", "🎉", "💰", "💎", "⭐"];
-const NUM_EMOJIS = 30;
+const NUM_FLAKES = 50;
 
-type Emoji = {
+type Flake = {
   id: number;
-  emoji: string;
   x: number;
   duration: number;
   delay: number;
   size: number;
+  opacity: number;
 };
 
 export function FallingEmojis() {
-  const [emojis, setEmojis] = useState<Emoji[]>([]);
+  const [flakes, setFlakes] = useState<Flake[]>([]);
 
   useEffect(() => {
-    const generatedEmojis = Array.from({ length: NUM_EMOJIS }).map((_, i) => ({
+    const generatedFlakes = Array.from({ length: NUM_FLAKES }).map((_, i) => ({
       id: i,
-      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
       x: Math.random() * 100,
-      duration: 5 + Math.random() * 10,
-      delay: Math.random() * -15,
-      size: 1 + Math.random() * 1.5,
+      duration: 10 + Math.random() * 10,
+      delay: Math.random() * -20,
+      size: 0.5 + Math.random() * 1,
+      opacity: 0.3 + Math.random() * 0.7,
     }));
-    setEmojis(generatedEmojis);
+    setFlakes(generatedFlakes);
   }, []);
 
-  if (emojis.length === 0) {
+  if (flakes.length === 0) {
     return null;
   }
 
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      {emojis.map(({ id, emoji, x, duration, delay, size }) => (
+      {flakes.map(({ id, x, duration, delay, size, opacity }) => (
         <span
           key={id}
-          className="absolute animate-fall opacity-50"
+          className="absolute animate-snowfall text-white"
           style={
             {
               left: `${x}vw`,
               fontSize: `${size}rem`,
               animationDuration: `${duration}s`,
               animationDelay: `${delay}s`,
+              opacity: opacity,
             } as React.CSSProperties
           }
         >
-          {emoji}
+          ❄️
         </span>
       ))}
     </div>
