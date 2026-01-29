@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "./ui/separator";
+import { useState } from "react";
+import { useAuth } from "@/firebase/provider";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -23,49 +30,84 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export default function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const auth = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!auth) {
+        setError("Auth service not available.");
+        return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/dashboard');
+    } catch (error: any) {
+      setError(error.message);
+       toast({
+        variant: "destructive",
+        title: "Sign In Failed",
+        description: error.message,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Card className="w-full max-w-sm border-primary/20 bg-card/80 backdrop-blur-sm">
-      <CardHeader className="text-center">
-        <CardTitle className="text-3xl font-bold animate-flicker">Welcome Back</CardTitle>
-        <CardDescription className="text-muted-foreground">
-          Enter your credentials to access your panel
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full">
-          <GoogleIcon className="mr-2" />
-          Sign in with Google
-        </Button>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <Separator />
+      <form onSubmit={handleLogin}>
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-bold animate-flicker">Welcome Back</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Enter your credentials to access your panel
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <Button variant="outline" className="w-full">
+            <GoogleIcon className="mr-2" />
+            Sign in with Google
+          </Button>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">
-              Or continue with
-            </span>
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="you@example.com" required value={email} onChange={e => setEmail(e.target.value)} />
           </div>
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="username">Username</Label>
-          <Input id="username" type="text" placeholder="YourUsername" required />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" placeholder="••••••••" required />
-        </div>
-      </CardContent>
-      <CardFooter className="flex flex-col gap-4">
-        <Button className="w-full hover:drop-shadow-neon transition-all duration-300">
-          Sign In
-        </Button>
-        <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="underline text-primary/80 hover:text-primary">
-            Sign up
-          </Link>
-        </div>
-      </CardFooter>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" type="password" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)} />
+          </div>
+           {error && <p className="text-destructive text-sm">{error}</p>}
+        </CardContent>
+        <CardFooter className="flex flex-col gap-4">
+          <Button type="submit" disabled={isSubmitting} className="w-full hover:drop-shadow-neon transition-all duration-300">
+            {isSubmitting ? 'Signing In...' : 'Sign In'}
+          </Button>
+          <div className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="underline text-primary/80 hover:text-primary">
+              Sign up
+            </Link>
+          </div>
+        </CardFooter>
+      </form>
     </Card>
   );
 }
