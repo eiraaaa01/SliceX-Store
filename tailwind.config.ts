@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['"Space Grotesk"', 'sans-serif'],
+        headline: ['"Space Grotesk"', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
@@ -88,11 +88,31 @@ export default {
             height: '0',
           },
         },
+        fall: {
+          '0%': { transform: 'translateY(-20vh) rotate(0deg)' },
+          '100%': { transform: 'translateY(120vh) rotate(360deg)' },
+        },
+        flicker: {
+          '0%, 100%': {
+            opacity: '1',
+            textShadow: '0 0 8px hsl(var(--primary)), 0 0 16px hsl(var(--primary))',
+          },
+          '50%': {
+            opacity: '0.8',
+            textShadow: '0 0 4px hsl(var(--primary)), 0 0 8px hsl(var(--primary))',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        fall: 'fall linear forwards',
+        flicker: 'flicker 2s ease-in-out infinite',
       },
+      dropShadow: {
+        neon: '0 0 10px hsl(var(--primary))',
+        'neon-sm': '0 0 5px hsl(var(--primary))',
+      }
     },
   },
   plugins: [require('tailwindcss-animate')],
