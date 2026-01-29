@@ -89,8 +89,8 @@ export default {
           },
         },
         snowfall: {
-          '0%': { transform: 'translateY(-20vh) rotate(0deg)' },
-          '100%': { transform: 'translateY(120vh) rotate(360deg)' },
+          '0%': { transform: 'translateY(-20vh)' },
+          '100%': { transform: 'translateY(120vh)' },
         },
         flicker: {
           '0%, 100%': {
