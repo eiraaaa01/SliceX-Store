@@ -1,0 +1,121 @@
+/**
+ * This ruleset enforces a security model with two primary access patterns:
+ * 1.  Strict User Ownership: Data stored under `/users/{userId}` is private and can only be
+ *     accessed by the authenticated user matching the `{userId}`. This applies to both the
+ *     user's profile document and their subcollections, such as `orders`.
+ * 2.  Role-Based Access Control (RBAC): Top-level collections like `/smm_services` are
+ *     readable by any authenticated user but are only writable by administrative users.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores a user's private profile.
+ * - /users/{userId}/orders/{orderId}: A subcollection for a user's private orders.
+ * - /smm_services/{smmServiceId}: A public-readable collection of services.
+ * - /roles_admin/{userId}: A lookup collection where the existence of a document
+ *   grants a user administrative privileges.
+ *
+ * Key Security Decisions:
+ * - User Listing Disabled: To protect user privacy, listing documents in the top-level
+ *   `/users` collection is explicitly forbidden.
+ * - Admin Privileges: Admin status is determined by the existence of a document in
+ *   the `/roles_admin` collection. This collection is read-only from the client-side
+ *   to prevent users from elevating their own permissions.
+ * - Authenticated Reads: Public-facing data (like `/smm_services`) is readable only by
+ *   signed-in users, preventing anonymous data scraping.
+ *
+ * Denormalization for Authorization:
+ * - The `/users/{userId}/orders/{orderId}` documents contain a `userId` field. This allows
+ *   rules to validate ownership directly from the document's data on create and update,
+ *   avoiding slow and costly `get()` calls to parent documents. This ensures path and
+ *   data consistency.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for readable and reusable logic
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Checks if the requesting user's UID matches the document's user ID.
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Checks if the requesting user has an admin role document.
+    // This is an efficient lookup that doesn't count as a read.
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    // Ensures that an update or delete operation is targeting an existing document.
+    function isExistingDoc() {
+      return resource != null;
+    }
+
+    /**
+     * @description Secures a user's private profile document. Only the owner of the document
+     *              can read, create, update, or delete it.
+     * @path        /users/{userId}
+     * @allow       (create) A new user `auth.uid: "user_abc"` can create their own document at `/users/user_abc`.
+     * @deny        (get) A user `auth.uid: "user_xyz"` cannot read the document at `/users/user_abc`.
+     * @principle   Restricts access to a user's own data tree and enforces self-creation.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Disallow listing all users for privacy.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isOwner(userId) && isExistingDoc() && request.resource.data.id == resource.data.id;
+      allow delete: if isOwner(userId) && isExistingDoc();
+
+      /**
+       * @description Secures a user's order history. Access is inherited from the parent
+       *              user document, meaning only the user can manage their own orders.
+       * @path        /users/{userId}/orders/{orderId}
+       * @allow       (create) A user `auth.uid: "user_abc"` can create a new order document in their own subcollection.
+       * @deny        (list) A user `auth.uid: "user_xyz"` cannot list the orders for `/users/user_abc`.
+       * @principle   Enforces document ownership for all operations within a user's private subcollection.
+       */
+      match /orders/{orderId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isOwner(userId) && isExistingDoc() && request.resource.data.userId == resource.data.userId;
+        allow delete: if isOwner(userId) && isExistingDoc();
+      }
+    }
+
+    /**
+     * @description Manages access to SMM services. Any authenticated user can read the list of services,
+     *              but only users with an admin role can create, modify, or remove them.
+     * @path        /smm_services/{smmServiceId}
+     * @allow       (get) Any signed-in user can read a service document.
+     * @deny        (create) A non-admin user cannot create a new service.
+     * @principle   Implements public-read access for authenticated users with role-based write restrictions.
+     */
+    match /smm_services/{smmServiceId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin() && isExistingDoc();
+      allow delete: if isAdmin() && isExistingDoc();
+    }
+
+    /**
+     * @description A read-only collection for admin role verification. The presence of a document
+     *              confers admin rights. All client-side writes are disabled to prevent
+     *              users from elevating their own permissions.
+     * @path        /roles_admin/{userId}
+     * @allow       (get) An admin user can read an admin role document (e.g., to check another user's status).
+     * @deny        (create) Any user, including an admin, cannot create a role document from the client.
+     * @principle   Secures role-management data by making it read-only from the client.
+     */
+    match /roles_admin/{userId} {
+      allow get: if isAdmin();
+      allow list: if isAdmin();
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
