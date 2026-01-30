@@ -1,9 +1,9 @@
 'use client';
 
-import { useUser, useFirestore, useMemoFirebase, useDoc, setDocumentNonBlocking } from '@/firebase';
+import { useUser, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
-import { doc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, runTransaction } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 import { updateProfile } from 'firebase/auth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -24,38 +24,39 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!username.trim()) {
-            setError("Username is required.");
+        if (!username.trim() || !name.trim()) {
+            setError("Name and Username are required.");
             return;
         }
         setError(null);
         setIsSubmitting(true);
 
         try {
-            // Check for username uniqueness
-            const usersRef = collection(firestore, 'users');
-            const q = query(usersRef, where('username', '==', username));
-            const querySnapshot = await getDocs(q);
+            // Use a transaction to atomically check for username and create user doc
+            await runTransaction(firestore, async (transaction) => {
+                const usernameDocRef = doc(firestore, "usernames", username.toLowerCase());
+                const usernameDoc = await transaction.get(usernameDocRef);
 
-            if (!querySnapshot.empty) {
-                setError('Username already exists. Please choose another one.');
-                setIsSubmitting(false);
-                return;
-            }
+                if (usernameDoc.exists()) {
+                    throw new Error("Username already exists. Please choose another one.");
+                }
 
-            // Update Auth profile
+                // If username is available, reserve it and create the user profile
+                transaction.set(usernameDocRef, { uid: user.uid });
+                
+                const userDocRef = doc(firestore, 'users', user.uid);
+                transaction.set(userDocRef, {
+                    id: user.uid,
+                    username: username,
+                    name: name,
+                    email: user.email,
+                    isEmailVerified: user.emailVerified,
+                    registrationDate: new Date().toISOString(),
+                });
+            });
+
+            // If transaction is successful, update Auth profile and notify user
             await updateProfile(user, { displayName: name });
-
-            // Create Firestore document
-            const userDocRef = doc(firestore, 'users', user.uid);
-            setDocumentNonBlocking(userDocRef, {
-                id: user.uid,
-                username: username,
-                name: name,
-                email: user.email,
-                isEmailVerified: user.emailVerified,
-                registrationDate: new Date().toISOString(),
-            }, { merge: false });
 
             toast({
                 title: "Profile complete!",

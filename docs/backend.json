@@ -112,6 +112,29 @@
         "orderDate",
         "status"
       ]
+    },
+    "Username": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Username",
+      "type": "object",
+      "description": "Represents a unique username reservation to prevent duplicates.",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The UID of the user who owns this username."
+        }
+      },
+      "required": [
+        "uid"
+      ]
+    },
+    "role_admin": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Admin Role",
+      "type": "object",
+      "description": "An empty object whose existence at /roles_admin/{userId} grants admin privileges.",
+      "properties": {},
+      "additionalProperties": false
     }
   },
   "auth": {
@@ -180,7 +203,7 @@
         "definition": {
           "entityName": "role_admin",
           "schema": {
-            "$ref": "#/backend/entities/User"
+            "$ref": "#/backend/entities/role_admin"
           },
           "description": "Indicates admin status. The presence of a document at this path grants admin privileges.",
           "params": [
@@ -190,8 +213,24 @@
             }
           ]
         }
+      },
+      {
+        "path": "/usernames/{username}",
+        "definition": {
+          "entityName": "Username",
+          "schema": {
+            "$ref": "#/backend/entities/Username"
+          },
+          "description": "Stores unique usernames to prevent duplicates. The document ID is the username. Client-side creation is allowed via transaction but updates and deletes are disabled.",
+          "params": [
+            {
+              "name": "username",
+              "description": "The unique user-chosen name, stored in lowercase."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure security, scalability, and ease of debugging, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. It uses denormalization to avoid `get()` calls in security rules and structural segregation to maintain a homogeneous security posture within collections.\n\n- **Users:** User data is stored in a path-based structure (`/users/{userId}`). This enforces clear ownership.  `isEmailVerified` is included as a top-level property to allow rules to quickly verify email verification status. A user can only `read` and `write` their own document.\n- **SmmServices:** SMM services are stored in a collection `/smm_services`. Any authenticated user can `read` the data. Only admins can `create`, `update`, and `delete` them. Admin status is determined by the presence of a document in `/roles_admin/{userId}`.\n- **Orders:** Orders are stored within the user's document using a hierarchical path (`/users/{userId}/orders/{orderId}`). This structure represents the `User 1:N Order` relationship. This allows secure access to the orders. The `userId` is denormalized to ensure Authorization Independence for orders. This allows security rules to efficiently determine if a user owns the order.\n\n**Authorization Independence and QAPs:**\n- Authorization Independence is achieved by denormalizing the `userId` in the `/users/{userId}/orders/{orderId}` collection. This eliminates the need for `get()` calls in security rules to verify ownership.  \n- QAPs are supported through structural segregation. Each collection has a specific security profile.  The `/smm_services` collection only allows admin `create`, `update`, `delete` operations, while allowing any authenticated user to `read`. The `/users/{userId}` collection only allows each user to `read` and `write` their own information. List operations are secure because the rules ensure that only authorized data is returned.  The path-based ownership for `/users/{userId}/orders/{orderId}` also ensures QAPs; only the user can list their orders.\n"
+    "reasoning": "The Firestore structure is designed to ensure security, scalability, and ease of debugging, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. It uses denormalization to avoid `get()` calls in security rules and structural segregation to maintain a homogeneous security posture within collections.\n\n- **Users:** User data is stored in a path-based structure (`/users/{userId}`). This enforces clear ownership.  `isEmailVerified` is included as a top-level property to allow rules to quickly verify email verification status. A user can only `read` and `write` their own document.\n- **SmmServices:** SMM services are stored in a collection `/smm_services`. Any authenticated user can `read` the data. Only admins can `create`, `update`, and `delete` them. Admin status is determined by the presence of a document in `/roles_admin/{userId}`.\n- **Orders:** Orders are stored within the user's document using a hierarchical path (`/users/{userId}/orders/{orderId}`). This structure represents the `User 1:N Order` relationship. This allows secure access to the orders. The `userId` is denormalized to ensure Authorization Independence for orders. This allows security rules to efficiently determine if a user owns the order.\n- **Usernames:** To enforce username uniqueness without allowing a `list` operation on the `/users` collection, a separate `/usernames/{username}` collection is used. This provides a secure and scalable way to check for and claim a username during registration.\n\n**Authorization Independence and QAPs:**\n- Authorization Independence is achieved by denormalizing the `userId` in the `/users/{userId}/orders/{orderId}` collection. This eliminates the need for `get()` calls in security rules to verify ownership.  \n- QAPs are supported through structural segregation. Each collection has a specific security profile.  The `/smm_services` collection only allows admin `create`, `update`, `delete` operations, while allowing any authenticated user to `read`. The `/users/{userId}` collection only allows each user to `read` and `write` their own information. List operations are secure because the rules ensure that only authorized data is returned.  The path-based ownership for `/users/{userId}/orders/{orderId}` also ensures QAPs; only the user can list their orders.\n"
   }
 }

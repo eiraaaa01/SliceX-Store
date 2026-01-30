@@ -12,10 +12,14 @@
  * - /smm_services/{smmServiceId}: A public-readable collection of services.
  * - /roles_admin/{userId}: A lookup collection where the existence of a document
  *   grants a user administrative privileges.
+ * - /usernames/{username}: A collection to enforce unique usernames during registration.
  *
  * Key Security Decisions:
  * - User Listing Disabled: To protect user privacy, listing documents in the top-level
  *   `/users` collection is explicitly forbidden.
+ * - Username Uniqueness: Uniqueness is enforced by attempting to create a document in the
+ *   `/usernames/{username}` collection. The rules only allow creation if the document
+ *   doesn't already exist, preventing duplicate usernames atomically.
  * - Admin Privileges: Admin status is determined by the existence of a document in
  *   the `/roles_admin` collection. This collection is read-only from the client-side
  *   to prevent users from elevating their own permissions.
@@ -99,6 +103,23 @@ service cloud.firestore {
       allow create: if isAdmin();
       allow update: if isAdmin() && isExistingDoc();
       allow delete: if isAdmin() && isExistingDoc();
+    }
+
+    /**
+     * @description A collection for unique username verification. The document ID is the
+     *              lowercase username. This allows for an atomic, secure check for username
+     *              uniqueness during registration without allowing users to list all usernames.
+     * @path        /usernames/{username}
+     * @allow       (create) A user can create a username document if it doesn't exist and the UID matches their own.
+     * @deny        (update, delete) No modifications are allowed to prevent username takeovers.
+     * @principle   Secures a critical registration step by enforcing atomic, unique claims.
+     */
+    match /usernames/{username} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**

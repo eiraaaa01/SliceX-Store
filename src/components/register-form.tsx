@@ -13,12 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useAuth, useFirestore, setDocumentNonBlocking } from "@/firebase";
+import { useAuth, useFirestore } from "@/firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Separator } from "./ui/separator";
-import { doc } from "firebase/firestore";
+import { doc, runTransaction } from "firebase/firestore";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -82,18 +82,29 @@ export default function RegisterForm() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      await updateProfile(user, { displayName: username });
-      
-      const userDocRef = doc(firestore, 'users', user.uid);
-      setDocumentNonBlocking(userDocRef, {
-        id: user.uid,
-        username: username,
-        name: username,
-        email: user.email,
-        isEmailVerified: user.emailVerified,
-        registrationDate: new Date().toISOString(),
-      }, { merge: false });
 
+      await runTransaction(firestore, async (transaction) => {
+        const usernameDocRef = doc(firestore, "usernames", username.toLowerCase());
+        const usernameDoc = await transaction.get(usernameDocRef);
+
+        if (usernameDoc.exists()) {
+            throw new Error("Username already exists. Please choose another one.");
+        }
+
+        transaction.set(usernameDocRef, { uid: user.uid });
+        
+        const userDocRef = doc(firestore, 'users', user.uid);
+        transaction.set(userDocRef, {
+            id: user.uid,
+            username: username,
+            name: username,
+            email: user.email,
+            isEmailVerified: user.emailVerified,
+            registrationDate: new Date().toISOString(),
+        });
+      });
+      
+      await updateProfile(user, { displayName: username });
       await sendEmailVerification(userCredential.user);
       setVerificationSent(true);
     } catch (error: any) {
