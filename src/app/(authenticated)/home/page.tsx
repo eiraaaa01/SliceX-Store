@@ -5,7 +5,7 @@ import {
   CardTitle,
   CardDescription
 } from "@/components/ui/card";
-import { DollarSign, ListOrdered, Users, ArrowUp } from "lucide-react";
+import { DollarSign, ListOrdered, Users } from "lucide-react";
 
 const statCards = [
   {
@@ -28,11 +28,11 @@ const statCards = [
   },
 ];
 
-export default function DashboardPage() {
+export default function HomePage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-glow">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-glow">Home</h1>
         <p className="text-muted-foreground">
           Welcome back! Here&apos;s a summary of your account.
         </p>

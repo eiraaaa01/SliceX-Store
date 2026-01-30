@@ -39,9 +39,9 @@ export default function AuthenticatedLayout({
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <Link href="/dashboard" passHref>
-                  <SidebarMenuButton isActive={isActive('/dashboard')} asChild>
-                    <span><NeonIcon icon={Home} /> Dashboard</span>
+                <Link href="/home" passHref>
+                  <SidebarMenuButton isActive={isActive('/home')} asChild>
+                    <span><NeonIcon icon={Home} /> Home</span>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
