@@ -51,6 +51,7 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
             setDocumentNonBlocking(userDocRef, {
                 id: user.uid,
                 username: username,
+                name: name,
                 email: user.email,
                 isEmailVerified: user.emailVerified,
                 registrationDate: new Date().toISOString(),

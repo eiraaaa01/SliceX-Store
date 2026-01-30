@@ -88,6 +88,7 @@ export default function RegisterForm() {
       setDocumentNonBlocking(userDocRef, {
         id: user.uid,
         username: username,
+        name: username,
         email: user.email,
         isEmailVerified: user.emailVerified,
         registrationDate: new Date().toISOString(),
