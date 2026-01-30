@@ -13,11 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useAuth } from "@/firebase/provider";
+import { useAuth, useFirestore, setDocumentNonBlocking } from "@/firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Separator } from "./ui/separator";
+import { doc } from "firebase/firestore";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -37,6 +38,7 @@ export default function RegisterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   const auth = useAuth();
+  const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -71,7 +73,7 @@ export default function RegisterForm() {
       setError("Passwords do not match.");
       return;
     }
-    if (!auth) {
+    if (!auth || !firestore) {
         setError("Auth service not available.");
         return;
     }
@@ -79,7 +81,18 @@ export default function RegisterForm() {
     setIsSubmitting(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: username });
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: username });
+      
+      const userDocRef = doc(firestore, 'users', user.uid);
+      setDocumentNonBlocking(userDocRef, {
+        id: user.uid,
+        username: username,
+        email: user.email,
+        isEmailVerified: user.emailVerified,
+        registrationDate: new Date().toISOString(),
+      }, { merge: false });
+
       await sendEmailVerification(userCredential.user);
       setVerificationSent(true);
     } catch (error: any) {
