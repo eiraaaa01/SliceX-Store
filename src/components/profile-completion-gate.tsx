@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 import { doc, runTransaction } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
-import { updateProfile } from 'firebase/auth';
+import { updateProfile, updatePassword } from 'firebase/auth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: () => void }) {
     const [name, setName] = useState(user.displayName || '');
     const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,6 +28,14 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
         e.preventDefault();
         if (!username.trim() || !name.trim()) {
             setError("Name and Username are required.");
+            return;
+        }
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+        if (!password) {
+            setError("Password is required.");
             return;
         }
         setError(null);
@@ -55,8 +65,9 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
                 });
             });
 
-            // If transaction is successful, update Auth profile and notify user
+            // If transaction is successful, update Auth profile and password, then notify user
             await updateProfile(user, { displayName: name });
+            await updatePassword(user, password);
 
             toast({
                 title: "Profile complete!",
@@ -104,6 +115,18 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
                                 Username
                             </Label>
                             <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} className="col-span-3" required />
+                        </div>
+                         <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="password" className="text-right">
+                                Password
+                            </Label>
+                            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="col-span-3" required />
+                        </div>
+                         <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="confirm-password" className="text-right">
+                                Confirm Password
+                            </Label>
+                            <Input id="confirm-password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="col-span-3" required />
                         </div>
                          {error && <p className="col-span-4 text-center text-sm text-destructive">{error}</p>}
                     </div>
