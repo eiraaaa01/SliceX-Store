@@ -155,13 +155,7 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
         }
     }, [user, isUserLoading, userProfile, isProfileLoading, auth, router]);
 
-    const isGoogleUserWithoutProfile = user?.providerData.some(p => p.providerId === 'google.com') && !userProfile;
-
-    if (showModal && user) {
-        return <ProfileCompletionModal user={user} onComplete={() => setShowModal(false)} />;
-    }
-    
-    if (isUserLoading || (!isProfileLoading && isGoogleUserWithoutProfile) ) {
+    if (isUserLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
                 <p>Loading...</p>
@@ -169,5 +163,12 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
         );
     }
 
-    return children;
+    return (
+        <>
+            {children}
+            {showModal && user && (
+                <ProfileCompletionModal user={user} onComplete={() => setShowModal(false)} />
+            )}
+        </>
+    );
 }
