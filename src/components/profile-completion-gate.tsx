@@ -1,11 +1,10 @@
 'use client';
 
-import { useUser, useFirestore, useMemoFirebase, useDoc, useAuth } from '@/firebase';
-import { useRouter } from 'next/navigation';
+import { useUser, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
 import { useEffect, useState, type FormEvent } from 'react';
 import { doc, runTransaction } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
-import { updateProfile, updatePassword, signOut } from 'firebase/auth';
+import { updateProfile, updatePassword } from 'firebase/auth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -149,61 +148,35 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
 export default function ProfileCompletionGate({ children }: { children: React.ReactNode }) {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
-    const auth = useAuth();
-    const router = useRouter();
     const [showModal, setShowModal] = useState(false);
 
     const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
     useEffect(() => {
-        if (typeof window === 'undefined' || isUserLoading || isProfileLoading) {
+        if (isUserLoading || isProfileLoading) {
             return;
         }
 
         const isGoogleUser = user?.providerData.some(p => p.providerId === 'google.com');
         const profileIncomplete = isGoogleUser && !userProfile;
         
-        if (profileIncomplete) {
-            if (sessionStorage.getItem('profileCompletionInProgress')) {
-                // This is a refresh, log the user out.
-                if (auth) {
-                    signOut(auth).then(() => {
-                        sessionStorage.removeItem('profileCompletionInProgress');
-                        router.push('/');
-                    });
-                }
-            } else {
-                sessionStorage.setItem('profileCompletionInProgress', 'true');
-                setShowModal(true);
-            }
-        } else {
-            // Profile is complete or not a Google user needing completion
-            if (sessionStorage.getItem('profileCompletionInProgress')) {
-                sessionStorage.removeItem('profileCompletionInProgress');
-            }
-            setShowModal(false);
-        }
+        setShowModal(profileIncomplete);
 
-    }, [user, isUserLoading, userProfile, isProfileLoading, auth, router]);
+    }, [user, isUserLoading, userProfile, isProfileLoading]);
 
     const handleComplete = () => {
-        if (typeof window !== 'undefined') {
-            sessionStorage.removeItem('profileCompletionInProgress');
-        }
         setShowModal(false);
     };
 
-    if (isUserLoading || (!user && !isUserLoading)) {
-        // While loading, or if there's definitively no user, show a loader or nothing.
-        // This prevents a flash of the children content.
+    if (isUserLoading || isProfileLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
                 <p>Loading...</p>
             </div>
         );
     }
-
+    
     return (
         <>
             {children}
