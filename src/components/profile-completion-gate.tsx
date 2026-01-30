@@ -1,11 +1,11 @@
 'use client';
 
-import { useUser, useFirestore, useAuth, useMemoFirebase, useDoc, setDocumentNonBlocking } from '@/firebase';
+import { useUser, useFirestore, useMemoFirebase, useDoc, setDocumentNonBlocking } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 import { doc, collection, query, where, getDocs } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
-import { updateProfile, signOut } from 'firebase/auth';
+import { updateProfile } from 'firebase/auth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -62,7 +62,6 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
                 description: "Welcome! Your registration is now complete.",
             });
 
-            sessionStorage.removeItem('profileCompletionInProgress');
             onComplete();
 
         } catch (err: any) {
@@ -120,9 +119,7 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
 
 export default function ProfileCompletionGate({ children }: { children: React.ReactNode }) {
     const { user, isUserLoading } = useUser();
-    const auth = useAuth();
     const firestore = useFirestore();
-    const router = useRouter();
     const [showModal, setShowModal] = useState(false);
 
     const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
@@ -136,24 +133,9 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
         const isGoogleUser = user?.providerData.some(p => p.providerId === 'google.com');
         const profileIncomplete = isGoogleUser && !userProfile;
         
-        if (profileIncomplete) {
-            const completing = sessionStorage.getItem('profileCompletionInProgress');
-            if (completing) {
-                signOut(auth).then(() => {
-                    sessionStorage.removeItem('profileCompletionInProgress');
-                    router.push('/');
-                });
-            } else {
-                sessionStorage.setItem('profileCompletionInProgress', 'true');
-                setShowModal(true);
-            }
-        } else {
-            if (sessionStorage.getItem('profileCompletionInProgress')) {
-                sessionStorage.removeItem('profileCompletionInProgress');
-            }
-            setShowModal(false);
-        }
-    }, [user, isUserLoading, userProfile, isProfileLoading, auth, router]);
+        setShowModal(profileIncomplete);
+
+    }, [user, isUserLoading, userProfile, isProfileLoading]);
 
     if (isUserLoading) {
         return (
