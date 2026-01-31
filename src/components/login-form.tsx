@@ -93,7 +93,7 @@ export default function LoginForm() {
     <Card className="w-full max-w-sm border-primary/20 bg-card/80 backdrop-blur-sm">
       <form onSubmit={handleLogin}>
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold animate-flicker">Welcome Back</CardTitle>
+          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
           <CardDescription className="text-muted-foreground">
             Enter your credentials to access your panel
           </CardDescription>
@@ -129,7 +129,7 @@ export default function LoginForm() {
            {error && <p className="text-destructive text-sm">{error}</p>}
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" disabled={isSubmitting} className="w-full hover:drop-shadow-neon transition-all duration-300">
+          <Button type="submit" disabled={isSubmitting} className="w-full hover:brightness-110 transition-all duration-300">
             {isSubmitting ? 'Signing In...' : 'Sign In'}
           </Button>
           <div className="text-center text-sm">

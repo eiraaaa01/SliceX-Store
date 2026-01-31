@@ -77,7 +77,7 @@ export default function AccountPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-glow">Account</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Account</h1>
         <p className="text-muted-foreground">
           Manage your account settings and personal information.
         </p>
@@ -99,7 +99,7 @@ export default function AccountPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button onClick={handleProfileUpdate} className="ml-auto hover:drop-shadow-neon transition-all duration-300">Save Changes</Button>
+            <Button onClick={handleProfileUpdate} className="ml-auto hover:brightness-110 transition-all duration-300">Save Changes</Button>
           </CardFooter>
         </Card>
 
@@ -138,7 +138,7 @@ export default function AccountPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button onClick={handlePasswordUpdate} className="ml-auto hover:drop-shadow-neon transition-all duration-300">Update Password</Button>
+            <Button onClick={handlePasswordUpdate} className="ml-auto hover:brightness-110 transition-all duration-300">Update Password</Button>
           </CardFooter>
         </Card>
       </div>

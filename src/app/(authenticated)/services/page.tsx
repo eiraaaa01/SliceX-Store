@@ -52,7 +52,7 @@ export default function ServicesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-glow">Services</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Services</h1>
         <p className="text-muted-foreground">
           Choose a service to boost your social media presence.
         </p>
@@ -65,12 +65,12 @@ export default function ServicesPage() {
               <CardDescription>{service.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow">
-              <p className="text-2xl font-bold text-primary animate-flicker">
+              <p className="text-2xl font-bold text-primary">
                 {service.price}
               </p>
             </CardContent>
             <CardFooter>
-              <Button className="w-full hover:drop-shadow-neon transition-all duration-300">
+              <Button className="w-full hover:brightness-110 transition-all duration-300">
                 <ShoppingCart className="mr-2 h-4 w-4" /> Order Now
               </Button>
             </CardFooter>

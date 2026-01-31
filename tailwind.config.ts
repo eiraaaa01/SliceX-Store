@@ -92,27 +92,12 @@ export default {
           '0%': { transform: 'translateY(-20vh)' },
           '100%': { transform: 'translateY(120vh)' },
         },
-        flicker: {
-          '0%, 100%': {
-            opacity: '1',
-            textShadow: '0 0 8px hsl(var(--primary)), 0 0 16px hsl(var(--primary))',
-          },
-          '50%': {
-            opacity: '0.8',
-            textShadow: '0 0 4px hsl(var(--primary)), 0 0 8px hsl(var(--primary))',
-          },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         snowfall: 'snowfall linear infinite',
-        flicker: 'flicker 2s ease-in-out infinite',
       },
-      dropShadow: {
-        neon: '0 0 10px hsl(var(--primary))',
-        'neon-sm': '0 0 5px hsl(var(--primary))',
-      }
     },
   },
   plugins: [require('tailwindcss-animate')],

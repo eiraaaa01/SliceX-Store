@@ -155,7 +155,7 @@ export default function EmailVerificationGate({ children }: { children: React.Re
                     <CardContent className="flex flex-col gap-4">
                         {isChecking ? (
                              <div>
-                                <p className="text-lg font-mono font-semibold text-primary animate-flicker">
+                                <p className="text-lg font-mono font-semibold text-primary">
                                     {formatTime(timeLeft)}
                                 </p>
                                 <Progress value={progress} className="w-full mt-2 h-2" />

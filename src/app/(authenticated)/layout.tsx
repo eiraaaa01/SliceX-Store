@@ -18,10 +18,6 @@ import { usePathname } from 'next/navigation';
 import EmailVerificationGate from '@/components/email-verification-gate';
 import ProfileCompletionGate from '@/components/profile-completion-gate';
 
-const NeonIcon = ({ icon: Icon }: { icon: React.ElementType }) => (
-  <Icon className="transition-all group-hover:drop-shadow-neon-sm" />
-);
-
 export default function AuthenticatedLayout({
   children,
 }: {
@@ -43,28 +39,28 @@ export default function AuthenticatedLayout({
                 <SidebarMenuItem>
                   <Link href="/home" passHref>
                     <SidebarMenuButton isActive={isActive('/home')} asChild>
-                      <span><NeonIcon icon={Home} /> Home</span>
+                      <span><Home /> Home</span>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <Link href="/services" passHref>
                     <SidebarMenuButton isActive={isActive('/services')} asChild>
-                      <span><NeonIcon icon={ShoppingCart} /> Services</span>
+                      <span><ShoppingCart /> Services</span>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <Link href="/orders" passHref>
                     <SidebarMenuButton isActive={isActive('/orders')} asChild>
-                      <span><NeonIcon icon={ListOrdered} /> Orders</span>
+                      <span><ListOrdered /> Orders</span>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <Link href="/account" passHref>
                     <SidebarMenuButton isActive={isActive('/account')} asChild>
-                    <span><NeonIcon icon={User} /> Account</span>
+                    <span><User /> Account</span>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>

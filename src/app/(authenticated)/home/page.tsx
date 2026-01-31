@@ -32,7 +32,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-glow">Home</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Home</h1>
         <p className="text-muted-foreground">
           Welcome back! Here&apos;s a summary of your account.
         </p>
