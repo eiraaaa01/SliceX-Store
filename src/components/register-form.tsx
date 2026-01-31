@@ -39,7 +39,6 @@ export default function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [verificationSent, setVerificationSent] = useState(false);
   const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -109,7 +108,7 @@ export default function RegisterForm() {
       
       await updateProfile(user, { displayName: username });
       await sendEmailVerification(userCredential.user);
-      setVerificationSent(true);
+      router.push('/home');
     } catch (error: any) {
       setError(error.message);
       toast({
@@ -121,29 +120,6 @@ export default function RegisterForm() {
       setIsSubmitting(false);
     }
   };
-
-  if (verificationSent) {
-    return (
-        <Card className="w-full max-w-sm border-primary/20 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
-            <CardDescription className="text-muted-foreground">
-            A verification link has been sent to your email address. Please check your inbox and follow the link to activate your account.
-            </CardDescription>
-        </CardHeader>
-        <CardContent>
-            <p className="text-sm text-center text-muted-foreground">
-                Once verified, you can sign in.
-            </p>
-        </CardContent>
-        <CardFooter>
-             <Button asChild className="w-full">
-                <Link href="/">Back to Sign In</Link>
-            </Button>
-        </CardFooter>
-        </Card>
-    );
-  }
 
   return (
     <Card className="w-full max-w-sm border-primary/20 bg-card/80 backdrop-blur-sm">
