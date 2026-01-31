@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user of the Neon SMM Panel.",
+      "description": "Represents a user of Hexa Vision.",
       "properties": {
         "id": {
           "type": "string",
@@ -46,7 +46,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "SmmService",
       "type": "object",
-      "description": "Represents an SMM service offered by the Neon SMM Panel.",
+      "description": "Represents an SMM service offered by Hexa Vision.",
       "properties": {
         "id": {
           "type": "string",

@@ -26,7 +26,7 @@ export function Logo({ className }: { className?: string }) {
         fill="hsl(var(--primary))"
         className="animate-flicker"
       >
-        NeonSMM
+        Hexa Vision
       </text>
     </svg>
   );

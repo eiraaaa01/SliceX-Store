@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'Neon SMM Panel',
-  description: 'The most electrifying SMM panel on the web.',
+  title: 'Hexa Vision',
+  description: 'Your vision for social media, amplified.',
 };
 
 export default function RootLayout({
