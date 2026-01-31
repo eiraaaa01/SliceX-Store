@@ -147,6 +147,9 @@ export default function EmailVerificationGate({ children }: { children: React.Re
                         <CardTitle className="text-2xl font-bold">Verify Your Email</CardTitle>
                         <CardDescription>
                             A verification link has been sent to <strong>{user.email}</strong>. Please check your inbox and click the link to activate your account.
+                             <div className="pt-2 text-xs text-muted-foreground">
+                                Can't find the email? Be sure to check your spam folder.
+                            </div>
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
