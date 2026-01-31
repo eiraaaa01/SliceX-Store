@@ -18,29 +18,17 @@ export function Logo({ className }: { className?: string }) {
           strokeLinejoin="round"
         />
         <path
-          d="M12 12L3 7"
+          d="M16.5 4.5L7.5 9.5"
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />
-         <path
-          d="M12 12L21 7"
+        <path
+          d="M16.5 19.5L7.5 14.5"
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinejoin="round"
         />
-         <path
-          d="M12 12V22"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-         <path
-          d="M16.5 9.5L7.5 14.5"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-         />
       </svg>
       <span className="font-headline text-xl font-bold text-foreground tracking-wide">
         Hexa Vision
