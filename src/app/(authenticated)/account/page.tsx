@@ -20,7 +20,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useLoading } from "@/context/LoadingContext";
 
 export default function AccountPage() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
   const { withLoading, showLoading, hideLoading } = useLoading();
@@ -31,6 +31,7 @@ export default function AccountPage() {
   }, [firestore, user]);
 
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<any>(userDocRef);
+  const isLoading = isUserLoading || isProfileLoading;
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -57,11 +58,11 @@ export default function AccountPage() {
   }, [user]);
 
   useEffect(() => {
-    if (isProfileLoading) {
+    if (isLoading) {
       showLoading();
       return () => hideLoading();
     }
-  }, [isProfileLoading, showLoading, hideLoading]);
+  }, [isLoading, showLoading, hideLoading]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -130,7 +131,7 @@ export default function AccountPage() {
   const fallbackAvatar = `https://picsum.photos/seed/${user?.uid || 'fallback'}/128/128`;
   const avatarSrc = photoPreview || user?.photoURL || fallbackAvatar;
 
-  if (isProfileLoading) {
+  if (isLoading) {
     return null;
   }
 
