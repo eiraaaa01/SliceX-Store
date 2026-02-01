@@ -20,7 +20,6 @@ import { useRouter } from "next/navigation";
 import { Separator } from "./ui/separator";
 import { doc, runTransaction } from "firebase/firestore";
 import { Eye, EyeOff } from "lucide-react";
-import { useLoading } from "@/context/LoadingContext";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -44,7 +43,6 @@ export default function RegisterForm() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
-  const { showLoading, hideLoading } = useLoading();
 
   const handleGoogleSignUp = async () => {
     setError(null);
@@ -53,13 +51,11 @@ export default function RegisterForm() {
         return;
     }
     setIsSubmitting(true);
-    showLoading();
     const provider = new GoogleAuthProvider();
     try {
         await signInWithPopup(auth, provider);
         router.push('/home');
     } catch (error: any) {
-        hideLoading();
         setError(error.message);
         toast({
             variant: "destructive",
@@ -85,7 +81,6 @@ export default function RegisterForm() {
     }
 
     setIsSubmitting(true);
-    showLoading();
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -120,7 +115,6 @@ export default function RegisterForm() {
       sessionStorage.removeItem('profileCompletionInProgress');
       router.push('/home');
     } catch (error: any) {
-      hideLoading();
       setError(error.message);
       toast({
         variant: "destructive",
