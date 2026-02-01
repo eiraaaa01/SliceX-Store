@@ -63,7 +63,24 @@ export default function HexaVisionLayout({
 
   const isActive = (path: string) => pathname.startsWith(path);
   
-  const panelName = isAdmin ? "Admin Panel" : "Hexa Vision";
+  const getPanelName = () => {
+    const adminPaths = ['/hexavision/dashboard', '/hexavision/products'];
+    const employeePaths = ['/hexavision/services', '/hexavision/orders'];
+
+    if (adminPaths.some(path => pathname.startsWith(path))) {
+        return "Admin Panel";
+    }
+    if (employeePaths.some(path => pathname.startsWith(path))) {
+        return "Hexa Vision";
+    }
+    
+    // Fallback for the root /hexavision page before redirect
+    if (isAdmin) return "Admin Panel";
+    if (isEmployee) return "Hexa Vision";
+
+    return "";
+  }
+  const panelName = getPanelName();
 
   // Render null if still loading or if the user is not (yet) authorized.
   // The useEffect above handles the redirection and loading indicator.
