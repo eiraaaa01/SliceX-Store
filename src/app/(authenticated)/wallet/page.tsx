@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Wallet as WalletIcon, FileText } from "lucide-react";
+import { useLoading } from "@/context/LoadingContext";
+import { useEffect } from "react";
 
 const transactions: any[] = []; // Mock data for now
 
@@ -16,7 +18,19 @@ export default function WalletPage() {
         return doc(firestore, 'users', user.uid);
     }, [firestore, user]);
 
-    const { data: userProfile } = useDoc<{walletBalance?: number}>(userDocRef);
+    const { data: userProfile, isLoading } = useDoc<{walletBalance?: number}>(userDocRef);
+    const { showLoading, hideLoading } = useLoading();
+
+    useEffect(() => {
+        if (isLoading) {
+            showLoading();
+            return () => hideLoading();
+        }
+    }, [isLoading, showLoading, hideLoading]);
+
+    if (isLoading) {
+        return null;
+    }
 
     return (
         <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">

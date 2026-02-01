@@ -45,8 +45,7 @@ export default function HexaVisionLayout({
   useEffect(() => {
     if (isLoading) {
       showLoading();
-    } else {
-      hideLoading();
+      return () => hideLoading();
     }
   }, [isLoading, showLoading, hideLoading]);
 

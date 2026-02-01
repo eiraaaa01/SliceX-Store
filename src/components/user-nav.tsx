@@ -24,13 +24,12 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { User as UserIcon, LogOut, Settings, Building, ListOrdered, Wallet, MessageSquare, CreditCard } from "lucide-react";
 import Link from 'next/link';
 import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { doc } from 'firebase/firestore';
 import { useLoading } from "@/context/LoadingContext";
 
@@ -39,7 +38,6 @@ export default function UserNav() {
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
-  const pathname = usePathname();
   const { showLoading } = useLoading();
 
   const userDocRef = useMemoFirebase(() => {
@@ -85,13 +83,13 @@ export default function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <Link href="/account" passHref>
-            <DropdownMenuItem onClick={() => { if (pathname !== '/account') showLoading() }}>
+            <DropdownMenuItem>
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
           </Link>
           <Link href="/orders" passHref>
-             <DropdownMenuItem onClick={() => { if (pathname !== '/orders') showLoading() }}>
+             <DropdownMenuItem>
                 <ListOrdered className="mr-2 h-4 w-4" />
                 <span>Orders</span>
             </DropdownMenuItem>
@@ -105,7 +103,7 @@ export default function UserNav() {
             <DropdownMenuShortcut>{userProfile?.coins ?? 0}</DropdownMenuShortcut>
           </DropdownMenuItem>
            <Link href="/wallet" passHref>
-                <DropdownMenuItem onClick={() => { if (pathname !== '/wallet') showLoading() }}>
+                <DropdownMenuItem>
                     <CreditCard className="mr-2 h-4 w-4" />
                     <span>Wallet</span>
                 </DropdownMenuItem>
@@ -136,12 +134,7 @@ export default function UserNav() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => { 
-                      if (!pathname.startsWith('/hexavision')) {
-                        showLoading(); 
-                      }
-                      router.push('/hexavision'); 
-                    }}>Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -166,12 +159,7 @@ export default function UserNav() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => { 
-                      if (!pathname.startsWith('/hexavision')) {
-                        showLoading(); 
-                      }
-                      router.push('/hexavision'); 
-                    }}>Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -181,7 +169,7 @@ export default function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
              <Link href="/account" passHref>
-                <DropdownMenuItem onClick={() => { if (pathname !== '/account') showLoading() }}>
+                <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
                 </DropdownMenuItem>
