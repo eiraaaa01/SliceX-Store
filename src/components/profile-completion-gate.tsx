@@ -26,6 +26,7 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
 
     const firestore = useFirestore();
     const { toast } = useToast();
+    const isGoogleUser = user.providerData.some(p => p.providerId === 'google.com');
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -33,14 +34,18 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
             setError("Name and Username are required.");
             return;
         }
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
-            return;
+
+        if (!isGoogleUser) {
+            if (password !== confirmPassword) {
+                setError("Passwords do not match.");
+                return;
+            }
+            if (!password) {
+                setError("Password is required.");
+                return;
+            }
         }
-        if (!password) {
-            setError("Password is required.");
-            return;
-        }
+        
         setError(null);
         setIsSubmitting(true);
 
@@ -70,7 +75,9 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
 
             // If transaction is successful, update Auth profile and password, then notify user
             await updateProfile(user, { displayName: name });
-            await updatePassword(user, password);
+            if (!isGoogleUser) {
+              await updatePassword(user, password);
+            }
 
             toast({
                 title: "Profile complete!",
@@ -116,24 +123,28 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
                             <Label htmlFor="username">Username</Label>
                             <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
                         </div>
-                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <div className="relative">
-                                <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" required />
-                                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowPassword((prev) => !prev)}>
-                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </Button>
-                            </div>
-                        </div>
-                         <div className="grid gap-2">
-                            <Label htmlFor="confirm-password">Confirm Password</Label>
-                            <div className="relative">
-                                <Input id="confirm-password" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pr-10" required />
-                                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowConfirmPassword((prev) => !prev)}>
-                                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </Button>
-                            </div>
-                        </div>
+                        {!isGoogleUser && (
+                            <>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="password">Password</Label>
+                                    <div className="relative">
+                                        <Input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" required />
+                                        <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowPassword((prev) => !prev)}>
+                                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                                    <div className="relative">
+                                        <Input id="confirm-password" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pr-10" required />
+                                        <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowConfirmPassword((prev) => !prev)}>
+                                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </Button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                          {error && <p className="text-center text-sm text-destructive">{error}</p>}
                     </div>
                     <DialogFooter>
