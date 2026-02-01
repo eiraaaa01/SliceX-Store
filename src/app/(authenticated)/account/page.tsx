@@ -10,16 +10,27 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
+import { doc, setDoc } from "firebase/firestore";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AccountPage() {
   const { user } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
-  const [username, setUsername] = useState('');
+  
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<any>(userDocRef);
+
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -32,15 +43,17 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (user) {
-      setUsername(user.displayName || '');
+      setName(user.displayName || '');
       setEmail(user.email || '');
     }
   }, [user]);
 
   const handleProfileUpdate = async () => {
-    if(user) {
+    if(user && userDocRef) {
         try {
-            await updateProfile(user, { displayName: username });
+            await updateProfile(user, { displayName: name });
+            // Also update the name in the firestore document
+            await setDoc(userDocRef, { name: name }, { merge: true });
             toast({ title: "Profile Updated", description: "Your profile has been updated successfully." });
         } catch (error: any) {
             toast({ variant: "destructive", title: "Error", description: error.message });
@@ -90,8 +103,12 @@ export default function AccountPage() {
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
+              <Label htmlFor="name">Name</Label>
+              {isProfileLoading ? <Skeleton className="h-10 w-full" /> : <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />}
+            </div>
+            <div className="grid gap-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+              {isProfileLoading ? <Skeleton className="h-10 w-full" /> : <Input id="username" value={userProfile?.username || ''} disabled />}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
