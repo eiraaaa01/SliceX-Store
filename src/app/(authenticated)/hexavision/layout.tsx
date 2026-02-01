@@ -12,7 +12,7 @@ import {
     SidebarFooter,
 } from "@/components/ui/sidebar";
 import { HexaVisionLogo } from "@/components/hexavision-logo";
-import { LayoutDashboard, ShoppingCart, ListOrdered, Store, Package } from "lucide-react";
+import { LayoutDashboard, Store, Package } from "lucide-react";
 import Link from 'next/link';
 import { usePathname, useRouter } from "next/navigation";
 import UserNav from "@/components/user-nav";
@@ -118,22 +118,10 @@ export default function HexaVisionLayout({
                 )}
                  {isEmployee && (
                     <>
-                        <SidebarMenuItem>
-                            <SidebarMenuButton asChild isActive={isActive('/hexavision/services')}>
-                                <Link href="/hexavision/services">
-                                    <ShoppingCart />
-                                    Services
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                            <SidebarMenuButton asChild isActive={isActive('/hexavision/orders')}>
-                                <Link href="/hexavision/orders">
-                                    <ListOrdered />
-                                    Orders
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
+                        {/* The Hexa Vision employee panel is under construction.
+                            No navigation items are needed here for now.
+                            This block is preserved to maintain the role-based logic
+                            for accessing the panel itself. */}
                     </>
                  )}
             </SidebarMenu>
