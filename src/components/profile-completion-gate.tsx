@@ -75,6 +75,8 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
                     registrationDate: new Date().toISOString(),
                     coins: 0,
                     walletBalance: 0,
+                    isAdmin: false,
+                    isEmployee: false,
                 });
             });
 

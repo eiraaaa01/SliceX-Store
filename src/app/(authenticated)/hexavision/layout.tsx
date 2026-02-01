@@ -37,9 +37,11 @@ export default function HexaVisionLayout({
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isAdmin?: boolean}>(userDocRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isAdmin?: boolean, isEmployee?: boolean}>(userDocRef);
   const isLoading = isAuthLoading || isProfileLoading;
-
+  const isAdmin = userProfile?.isAdmin ?? false;
+  const isEmployee = userProfile?.isEmployee ?? false;
+  
   useEffect(() => {
     if (isLoading) {
       showLoading();
@@ -54,17 +56,19 @@ export default function HexaVisionLayout({
     }
 
     // Once loading is done, check for authorization
-    if (!user || !userProfile?.isAdmin) {
+    if (!user || (!isAdmin && !isEmployee)) {
       router.replace('/home');
     }
-  }, [isLoading, user, userProfile, router]);
+  }, [isLoading, user, isAdmin, isEmployee, router]);
 
 
   const isActive = (path: string) => pathname.startsWith(path);
+  
+  const panelName = isAdmin ? "Admin Panel" : "Hexa Vision";
 
   // Render null if still loading or if the user is not (yet) authorized.
   // The useEffect above handles the redirection and loading indicator.
-  if (isLoading || !userProfile?.isAdmin) {
+  if (isLoading || (!isAdmin && !isEmployee)) {
     return null;
   }
 
@@ -76,38 +80,46 @@ export default function HexaVisionLayout({
         </SidebarHeader>
         <SidebarContent>
             <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive('/hexavision/dashboard')}>
-                        <Link href="/hexavision/dashboard">
-                            <LayoutDashboard />
-                            Dashboard
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive('/hexavision/products')}>
-                        <Link href="/hexavision/products">
-                            <Package />
-                            Products
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive('/hexavision/services')}>
-                        <Link href="/hexavision/services">
-                            <ShoppingCart />
-                            Services
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive('/hexavision/orders')}>
-                        <Link href="/hexavision/orders">
-                            <ListOrdered />
-                            Orders
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
+                {isAdmin && (
+                  <>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild isActive={isActive('/hexavision/dashboard')}>
+                            <Link href="/hexavision/dashboard">
+                                <LayoutDashboard />
+                                Dashboard
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild isActive={isActive('/hexavision/products')}>
+                            <Link href="/hexavision/products">
+                                <Package />
+                                Products
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+                 {isEmployee && (
+                    <>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton asChild isActive={isActive('/hexavision/services')}>
+                                <Link href="/hexavision/services">
+                                    <ShoppingCart />
+                                    Services
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton asChild isActive={isActive('/hexavision/orders')}>
+                                <Link href="/hexavision/orders">
+                                    <ListOrdered />
+                                    Orders
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </>
+                 )}
             </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
@@ -126,7 +138,7 @@ export default function HexaVisionLayout({
       <SidebarInset>
         <header className="flex h-16 items-center justify-between gap-4 border-b border-border/40 bg-background/95 px-4 md:px-6 sticky top-0 z-30">
             <SidebarTrigger />
-            <h1 className="text-lg font-semibold">Hexa Vision</h1>
+            <h1 className="text-lg font-semibold">{panelName}</h1>
             <UserNav />
         </header>
         <main className="p-4 sm:p-6 lg:p-8">

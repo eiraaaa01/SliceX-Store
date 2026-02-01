@@ -47,7 +47,7 @@ export default function UserNav() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile } = useDoc<{isAdmin?: boolean, coins?: number, walletBalance?: number}>(userDocRef);
+  const { data: userProfile } = useDoc<{isAdmin?: boolean, isEmployee?: boolean, coins?: number, walletBalance?: number}>(userDocRef);
 
   const handleSignOut = async () => {
     if (auth) {
@@ -124,6 +124,36 @@ export default function UserNav() {
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     <Building className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Switch to Admin Panel?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You are about to be redirected to the Admin panel. Do you want to continue?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => { 
+                      if (!pathname.startsWith('/hexavision')) {
+                        showLoading(); 
+                      }
+                      router.push('/hexavision'); 
+                    }}>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+        )}
+        {userProfile?.isEmployee && (
+            <>
+              <DropdownMenuSeparator />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Building className="mr-2 h-4 w-4" />
                     <span>Hexa Vision</span>
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
@@ -140,13 +170,13 @@ export default function UserNav() {
                       if (!pathname.startsWith('/hexavision')) {
                         showLoading(); 
                       }
-                      router.push('/hexavision/dashboard'); 
+                      router.push('/hexavision'); 
                     }}>Continue</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
             </>
-          )}
+        )}
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

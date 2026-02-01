@@ -110,6 +110,8 @@ export default function RegisterForm() {
             registrationDate: new Date().toISOString(),
             coins: 0,
             walletBalance: 0,
+            isAdmin: false,
+            isEmployee: false,
         });
       });
       
