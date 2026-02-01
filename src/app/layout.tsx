@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { CartProvider } from '@/context/CartContext';
 
 export const metadata: Metadata = {
-  title: 'Hexa Vision',
-  description: 'Your vision for social media, amplified.',
+  title: 'My Online Store',
+  description: 'A simple, clean, and friendly online store.',
 };
 
 export default function RootLayout({
@@ -30,9 +30,9 @@ export default function RootLayout({
           'bg-background'
         )}
       >
-        <FirebaseClientProvider>
+        <CartProvider>
           {children}
-        </FirebaseClientProvider>
+        </CartProvider>
         <Toaster />
       </body>
     </html>
