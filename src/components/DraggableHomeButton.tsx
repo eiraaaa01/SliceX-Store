@@ -11,7 +11,6 @@ export default function DraggableHomeButton() {
   const nodeRef = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
-  const dragStartPos = useRef({ x: 0, y: 0 });
   const offset = useRef({ x: 0, y: 0 });
   const [isClient, setIsClient] = useState(false);
 
@@ -25,41 +24,35 @@ export default function DraggableHomeButton() {
 
   const handleMouseDown = (e: MouseEvent<HTMLButtonElement>) => {
     if (!nodeRef.current) return;
+    
     isDraggingRef.current = false;
-    dragStartPos.current = { x: e.clientX, y: e.clientY };
     const rect = nodeRef.current.getBoundingClientRect();
     offset.current = {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
     };
+    
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
 
   const handleMouseMove = (e: globalThis.MouseEvent) => {
-    const distance = Math.sqrt(
-      Math.pow(e.clientX - dragStartPos.current.x, 2) +
-      Math.pow(e.clientY - dragStartPos.current.y, 2)
-    );
-    if (distance > 5) {
-      isDraggingRef.current = true;
-    }
-
-    if (isDraggingRef.current) {
-        e.preventDefault(); // Prevent text selection while dragging
-        const newX = e.clientX - offset.current.x;
-        const newY = e.clientY - offset.current.y;
-        
-        if (nodeRef.current) {
-            const maxX = window.innerWidth - nodeRef.current.offsetWidth;
-            const maxY = window.innerHeight - nodeRef.current.offsetHeight;
-            setPosition({ 
-                x: Math.max(0, Math.min(newX, maxX)), 
-                y: Math.max(0, Math.min(newY, maxY))
-            });
-        } else {
-            setPosition({ x: newX, y: newY });
-        }
+    // A single mouse move now registers as a drag, making it feel instant.
+    isDraggingRef.current = true;
+    e.preventDefault(); // Prevent text selection while dragging.
+    
+    const newX = e.clientX - offset.current.x;
+    const newY = e.clientY - offset.current.y;
+    
+    if (nodeRef.current) {
+        const maxX = window.innerWidth - nodeRef.current.offsetWidth;
+        const maxY = window.innerHeight - nodeRef.current.offsetHeight;
+        setPosition({ 
+            x: Math.max(0, Math.min(newX, maxX)), 
+            y: Math.max(0, Math.min(newY, maxY))
+        });
+    } else {
+        setPosition({ x: newX, y: newY });
     }
   };
 
@@ -70,7 +63,7 @@ export default function DraggableHomeButton() {
     if (!isDraggingRef.current) {
       router.push('/home');
     }
-    isDraggingRef.current = false;
+    // No need to reset isDraggingRef here, it's reset on mousedown.
   };
   
   if (!isClient) {
