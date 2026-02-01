@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useRouter } from 'next/navigation';
 import { Building } from 'lucide-react';
+import DraggableHomeButton from '@/components/DraggableHomeButton';
 
 
 export default function AuthenticatedLayout({
@@ -80,6 +81,7 @@ export default function AuthenticatedLayout({
                     </div>
                 </header>
                 <main className="flex-1">{children}</main>
+                <DraggableHomeButton />
                 <Cart />
             </div>
         </Sheet>
