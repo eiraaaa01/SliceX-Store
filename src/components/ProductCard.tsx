@@ -5,14 +5,9 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import type { Product } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
@@ -22,29 +17,25 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="p-0">
-        <div className="relative w-full h-48">
+    <Card className="flex flex-col overflow-hidden rounded-2xl p-5 border-0 shadow-2xl transition-transform ease-in-out duration-200 hover:-translate-y-1.5" style={{ background: 'linear-gradient(180deg, #151823, #111423)'}}>
+      <div className="relative w-full h-44 mb-3">
           <Image
             src={product.img}
             alt={product.name}
             fill
             style={{ objectFit: 'cover' }}
+            className="rounded-xl"
             data-ai-hint="product image"
           />
         </div>
-      </CardHeader>
-      <CardContent className="p-4 flex-grow">
-        <CardTitle className="text-lg font-semibold mb-2">{product.name}</CardTitle>
-        <CardDescription>{product.description}</CardDescription>
-      </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-        <p className="text-xl font-bold text-primary">${product.price}</p>
-        <Button onClick={() => addToCart(product)}>
-          <ShoppingCart className="mr-2 h-4 w-4" />
+      <CardContent className="p-0 flex-grow flex flex-col">
+        <h3 className="text-base font-semibold mb-1">{product.name}</h3>
+        <span className="text-sm text-muted-foreground">{product.description}</span>
+        <p className="text-base font-bold my-3">${product.price}</p>
+        <Button onClick={() => addToCart(product)} className="w-full rounded-full font-semibold mt-auto">
           Add to Cart
         </Button>
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 }

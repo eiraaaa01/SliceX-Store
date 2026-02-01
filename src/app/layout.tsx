@@ -3,11 +3,10 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { CartProvider } from '@/context/CartContext';
-import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'My Online Store',
-  description: 'A simple, clean, and friendly online store.',
+  title: 'Slice-Style Store',
+  description: 'A Slice-inspired shopping experience with a modern, premium feel.',
 };
 
 export default function RootLayout({
@@ -16,12 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
       </head>
@@ -31,11 +30,9 @@ export default function RootLayout({
           'bg-background'
         )}
       >
-        <FirebaseClientProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </FirebaseClientProvider>
+        <CartProvider>
+          {children}
+        </CartProvider>
         <Toaster />
       </body>
     </html>
