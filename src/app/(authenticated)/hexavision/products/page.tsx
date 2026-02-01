@@ -233,33 +233,33 @@ export default function ProductsPage() {
           <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-6">
             <div className="grid gap-2">
               <Label htmlFor="name">Product Name</Label>
-              <Input id="name" value={editingProduct?.name} onChange={handleInputChange} />
+              <Input id="name" value={editingProduct?.name || ''} onChange={handleInputChange} />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" value={editingProduct?.description} onChange={handleInputChange} />
+              <Textarea id="description" value={editingProduct?.description || ''} onChange={handleInputChange} />
             </div>
              <div className="grid grid-cols-2 gap-4">
                  <div className="grid gap-2">
                     <Label htmlFor="price">Selling Price (₹)</Label>
-                    <Input id="price" type="number" value={editingProduct?.price} onChange={handleNumberInputChange} />
+                    <Input id="price" type="number" value={editingProduct?.price ?? ''} onChange={handleNumberInputChange} />
                 </div>
                  <div className="grid gap-2">
                     <Label htmlFor="originalPrice">Original Price (₹)</Label>
-                    <Input id="originalPrice" type="number" value={editingProduct?.originalPrice} onChange={handleNumberInputChange} />
+                    <Input id="originalPrice" type="number" value={editingProduct?.originalPrice ?? ''} onChange={handleNumberInputChange} />
                 </div>
              </div>
              <div className="grid gap-2">
               <Label htmlFor="imageUrl">Image URL</Label>
-              <Input id="imageUrl" value={editingProduct?.imageUrl} onChange={handleInputChange} />
+              <Input id="imageUrl" value={editingProduct?.imageUrl || ''} onChange={handleInputChange} />
             </div>
              <div className="grid gap-2">
               <Label htmlFor="imageHint">Image Hint (for AI)</Label>
-              <Input id="imageHint" value={editingProduct?.imageHint} onChange={handleInputChange} />
+              <Input id="imageHint" value={editingProduct?.imageHint || ''} onChange={handleInputChange} />
             </div>
              <div className="grid gap-2">
               <Label htmlFor="shippingDate">Shipping Date</Label>
-              <Input id="shippingDate" type="date" value={editingProduct?.shippingDate} onChange={handleInputChange} />
+              <Input id="shippingDate" type="date" value={editingProduct?.shippingDate || ''} onChange={handleInputChange} />
             </div>
           </div>
           <DialogFooter>
