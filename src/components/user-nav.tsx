@@ -32,12 +32,16 @@ import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/fireb
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { doc } from 'firebase/firestore';
+import { useLoading } from "@/context/LoadingContext";
+import { useToast } from "@/hooks/use-toast";
 
 export default function UserNav() {
   const { user } = useUser();
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
+  const { showLoading, hideLoading } = useLoading();
+  const { toast } = useToast();
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -48,8 +52,18 @@ export default function UserNav() {
 
   const handleSignOut = async () => {
     if (auth) {
-      await signOut(auth);
-      router.push('/');
+      showLoading();
+      try {
+        await signOut(auth);
+        window.location.href = '/';
+      } catch (error: any) {
+        hideLoading();
+        toast({
+          variant: "destructive",
+          title: "Logout Failed",
+          description: error.message,
+        });
+      }
     }
   }
 
@@ -111,46 +125,21 @@ export default function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         
-        {userProfile?.isAdmin && (
+        {(userProfile?.isAdmin || userProfile?.isEmployee) && (
             <>
               <DropdownMenuSeparator />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     <Building className="mr-2 h-4 w-4" />
-                    <span>Admin Panel</span>
+                    <span>{userProfile?.isAdmin ? "Admin Panel" : "Hexa Vision"}</span>
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Switch to Admin Panel?</AlertDialogTitle>
+                    <AlertDialogTitle>Switch to {userProfile?.isAdmin ? "Admin Panel" : "Hexa Vision"}?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      You are about to be redirected to the Admin panel. Do you want to continue?
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </>
-        )}
-        {userProfile?.isEmployee && (
-            <>
-              <DropdownMenuSeparator />
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <Building className="mr-2 h-4 w-4" />
-                    <span>Hexa Vision</span>
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Switch to Hexa Vision Panel?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You are about to be redirected to the Hexa Vision SMM panel. Do you want to continue?
+                      You are about to be redirected to the {userProfile?.isAdmin ? "Admin panel" : "Hexa Vision SMM panel"}. Do you want to continue?
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
