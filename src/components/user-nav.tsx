@@ -32,14 +32,12 @@ import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/fireb
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { doc } from 'firebase/firestore';
-import { useLoading } from "@/context/LoadingContext";
 
 export default function UserNav() {
   const { user } = useUser();
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
-  const { showLoading } = useLoading();
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -50,10 +48,7 @@ export default function UserNav() {
 
   const handleSignOut = async () => {
     if (auth) {
-      showLoading();
       await signOut(auth);
-      // This is a special case. We want to clear the loading indicator immediately
-      // on the login page, so we don't call hideLoading() here.
       router.push('/');
     }
   }
