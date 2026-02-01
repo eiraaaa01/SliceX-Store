@@ -1,11 +1,10 @@
 'use client';
 
-import { useUser, useFirestore, useMemoFirebase, useDoc, useAuth } from '@/firebase';
-import { useRouter } from 'next/navigation';
+import { useUser, useFirestore, useMemoFirebase, useDoc } from '@/firebase';
 import { useEffect, useState, type FormEvent } from 'react';
 import { doc, runTransaction } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
-import { updateProfile, updatePassword, signOut } from 'firebase/auth';
+import { updateProfile, updatePassword } from 'firebase/auth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -161,26 +160,12 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
 export default function ProfileCompletionGate({ children }: { children: React.ReactNode }) {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
-    const auth = useAuth();
-    const router = useRouter();
     const [showModal, setShowModal] = useState(false);
 
     const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
     useEffect(() => {
-        const wasInProgress = sessionStorage.getItem('profileCompletionInProgress') === 'true';
-
-        if (wasInProgress) {
-            if (auth) {
-                signOut(auth).then(() => {
-                    sessionStorage.removeItem('profileCompletionInProgress');
-                    router.push('/register');
-                });
-            }
-            return;
-        }
-
         if (isUserLoading || isProfileLoading || !user) {
             return;
         }
@@ -192,10 +177,12 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
             sessionStorage.setItem('profileCompletionInProgress', 'true');
             setShowModal(true);
         } else {
+            // If the user profile is complete, we can safely remove the flag.
+            sessionStorage.removeItem('profileCompletionInProgress');
             setShowModal(false);
         }
 
-    }, [user, isUserLoading, userProfile, isProfileLoading, auth, router]);
+    }, [user, isUserLoading, userProfile, isProfileLoading]);
 
     const handleComplete = () => {
         setShowModal(false);
