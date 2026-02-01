@@ -29,7 +29,7 @@ service cloud.firestore {
       allow update: if isOwner(userId) && isExistingDoc() && request.resource.data.id == resource.data.id;
       allow delete: if isOwner(userId) && isExistingDoc();
 
-      match /cart/{productId} {
+      match /cart/{document=**} {
         allow read, write: if isOwner(userId);
       }
     }
