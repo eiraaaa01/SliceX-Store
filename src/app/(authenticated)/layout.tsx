@@ -48,7 +48,7 @@ export default function AuthenticatedLayout({
                     <Logo />
                     <div className="flex items-center gap-4">
                         <SheetTrigger asChild>
-                            <Button className="rounded-full font-semibold px-6">
+                            <Button size="sm" className="rounded-full font-semibold">
                                 <ShoppingCart className="mr-2 h-4 w-4" />
                                 Cart{cartCount > 0 ? ` (${cartCount})` : ''}
                             </Button>
