@@ -24,6 +24,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { User as UserIcon, LogOut, Settings, Building, ListOrdered, Wallet, MessageSquare, CreditCard } from "lucide-react";
 import Link from 'next/link';
