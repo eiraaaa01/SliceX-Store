@@ -9,6 +9,7 @@ import { useCart } from '@/context/CartContext';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ShoppingCart, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function ProductDetailPageSkeleton() {
     return (
@@ -81,6 +82,13 @@ export default function ProductDetailPage() {
                             })()}
                         </p>
                     )}
+                    <Alert className="mb-6">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Site Notice</AlertTitle>
+                        <AlertDescription>
+                            We are currently in a testing phase. Feel free to add products to your cart—they will be saved to your account for our official launch on February 3rd.
+                        </AlertDescription>
+                    </Alert>
                     <div className="mt-auto">
                         <div className="flex items-center justify-between">
                             <div className="flex items-baseline gap-2">

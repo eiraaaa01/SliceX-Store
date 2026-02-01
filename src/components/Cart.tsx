@@ -9,9 +9,10 @@ import {
 import { useCart } from "@/context/CartContext";
 import { ScrollArea } from "./ui/scroll-area";
 import { ShoppingCart } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
 
 export default function Cart() {
-  const { cartItems, totalPrice } = useCart();
+  const { cartItems, totalPrice, isCartLoading } = useCart();
 
   return (
     <SheetContent className="flex flex-col w-full sm:max-w-md bg-[#0f1220] border-l border-border p-6">
@@ -19,7 +20,13 @@ export default function Cart() {
         <SheetTitle className="text-lg font-bold">Your Cart</SheetTitle>
       </SheetHeader>
       
-      {cartItems.length > 0 ? (
+      {isCartLoading ? (
+         <div className="flex flex-col gap-4 my-4 flex-grow">
+            <div className="flex justify-between items-center"><Skeleton className="h-5 w-3/4" /><Skeleton className="h-5 w-1/5" /></div>
+            <div className="flex justify-between items-center"><Skeleton className="h-5 w-2/3" /><Skeleton className="h-5 w-1/4" /></div>
+            <div className="flex justify-between items-center"><Skeleton className="h-5 w-3/4" /><Skeleton className="h-5 w-1/5" /></div>
+         </div>
+      ) : cartItems.length > 0 ? (
         <>
           <ScrollArea className="flex-grow -mr-6 pr-6">
             <div className="flex flex-col gap-3 my-4">
