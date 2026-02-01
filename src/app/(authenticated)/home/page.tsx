@@ -8,7 +8,7 @@ export default function HomePage() {
           Shop smarter.<br/>Pay smoother.
         </h2>
         <p className="text-muted-foreground mt-3 max-w-md">
-          A SliceX-inspired shopping experience with a modern, premium feel.
+          A SliceX-inspired shopping experience with a modern, premium feel with quality product.
         </p>
       </section>
       <section className="products-section py-8 px-6 sm:py-16 sm:px-6 lg:px-8 max-w-7xl mx-auto">
