@@ -47,7 +47,7 @@ export default function UserNav() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile } = useDoc<{isEmployee?: boolean}>(userDocRef);
+  const { data: userProfile } = useDoc<{isEmployee?: boolean, coins?: number}>(userDocRef);
 
   const handleSignOut = async () => {
     if (auth) {
@@ -99,8 +99,8 @@ export default function UserNav() {
         <DropdownMenuGroup>
           <DropdownMenuItem disabled>
             <Wallet className="mr-2 h-4 w-4" />
-            <span>Wallet</span>
-            <DropdownMenuShortcut>Soon</DropdownMenuShortcut>
+            <span>Coins</span>
+            <DropdownMenuShortcut>{userProfile?.coins ?? 0}</DropdownMenuShortcut>
           </DropdownMenuItem>
            <DropdownMenuItem disabled>
             <MessageSquare className="mr-2 h-4 w-4" />

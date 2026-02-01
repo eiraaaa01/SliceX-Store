@@ -70,6 +70,7 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
                     email: user.email,
                     isEmailVerified: user.emailVerified,
                     registrationDate: new Date().toISOString(),
+                    coins: 0,
                 });
             });
 
@@ -173,10 +174,11 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
     const isLoading = isUserLoading || isProfileLoading;
 
     useEffect(() => {
-        if (isLoading) {
-            showLoading();
-            return () => hideLoading();
-        }
+      if (isLoading) {
+        showLoading();
+      } else {
+        hideLoading();
+      }
     }, [isLoading, showLoading, hideLoading]);
 
     useEffect(() => {

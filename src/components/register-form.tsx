@@ -108,6 +108,7 @@ export default function RegisterForm() {
             email: user.email,
             isEmailVerified: user.emailVerified,
             registrationDate: new Date().toISOString(),
+            coins: 0,
         });
       });
       

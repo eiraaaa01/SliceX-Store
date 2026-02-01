@@ -41,6 +41,10 @@
           "type": "string",
           "description": "URL of the user's profile picture.",
           "format": "uri"
+        },
+        "coins": {
+          "type": "number",
+          "description": "The user's loyalty coin balance."
         }
       },
       "required": [
