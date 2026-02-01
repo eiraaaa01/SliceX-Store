@@ -12,6 +12,13 @@ export default function LoginPage() {
   const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
+    // When this component mounts, we want to ensure any previous loading indicators are cleared.
+    // This is especially important after a logout, where a `showLoading` might have been
+    // called without a corresponding `hideLoading`.
+    hideLoading();
+  }, [hideLoading]);
+
+  useEffect(() => {
     if (isUserLoading) {
       showLoading();
       return () => hideLoading();
