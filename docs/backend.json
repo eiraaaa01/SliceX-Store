@@ -89,7 +89,16 @@
         },
         "price": {
           "type": "number",
-          "description": "The price of the product."
+          "description": "The current selling price of the product."
+        },
+        "originalPrice": {
+          "type": "number",
+          "description": "The original price of the product, before any discounts."
+        },
+        "shippingDate": {
+          "type": "string",
+          "description": "Estimated shipping date for the product.",
+          "format": "date"
         },
         "imageUrl": {
             "type": "string",

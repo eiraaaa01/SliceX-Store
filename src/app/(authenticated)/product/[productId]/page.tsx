@@ -54,6 +54,8 @@ export default function ProductDetailPage() {
     
     const fullProduct: Product = { ...product, id: productId };
 
+    const hasDiscount = fullProduct.originalPrice && fullProduct.originalPrice > fullProduct.price;
+
     return (
         <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -70,9 +72,21 @@ export default function ProductDetailPage() {
                 <div className="flex flex-col h-full py-4">
                     <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-2">{fullProduct.name}</h1>
                     <p className="text-muted-foreground text-lg mb-6">{fullProduct.description}</p>
+                     {fullProduct.shippingDate && (
+                        <p className="text-sm text-muted-foreground mb-6">
+                            Estimated shipping: {new Date(fullProduct.shippingDate).toLocaleDateString()}
+                        </p>
+                    )}
                     <div className="mt-auto">
                         <div className="flex items-center justify-between">
-                            <p className="text-3xl font-bold">₹{fullProduct.price.toFixed(2)}</p>
+                            <div className="flex items-baseline gap-2">
+                                <p className="text-3xl font-bold">₹{fullProduct.price.toFixed(2)}</p>
+                                {hasDiscount && (
+                                    <p className="text-xl text-muted-foreground line-through">
+                                        ₹{fullProduct.originalPrice?.toFixed(2)}
+                                    </p>
+                                )}
+                            </div>
                             <Button onClick={() => addToCart(fullProduct)} size="lg" className="rounded-full font-semibold hover:brightness-110 transition-all duration-300">
                                 <ShoppingCart className="mr-2 h-5 w-5" />
                                 Add to Cart

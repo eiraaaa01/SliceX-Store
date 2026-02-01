@@ -12,7 +12,7 @@ import {
     SidebarFooter,
 } from "@/components/ui/sidebar";
 import { HexaVisionLogo } from "@/components/hexavision-logo";
-import { LayoutDashboard, ShoppingCart, ListOrdered, Store } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, ListOrdered, Store, Package } from "lucide-react";
 import Link from 'next/link';
 import { usePathname, useRouter } from "next/navigation";
 import UserNav from "@/components/user-nav";
@@ -43,9 +43,8 @@ export default function HexaVisionLayout({
   useEffect(() => {
     if (isLoading) {
       showLoading();
-      return () => {
-        hideLoading();
-      };
+    } else {
+      hideLoading();
     }
   }, [isLoading, showLoading, hideLoading]);
 
@@ -82,6 +81,14 @@ export default function HexaVisionLayout({
                         <Link href="/hexavision/dashboard">
                             <LayoutDashboard />
                             Dashboard
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={isActive('/hexavision/products')}>
+                        <Link href="/hexavision/products">
+                            <Package />
+                            Products
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
