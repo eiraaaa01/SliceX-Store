@@ -13,17 +13,38 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import { User as UserIcon, LogOut, Settings } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { User as UserIcon, LogOut, Settings, Building, ListOrdered, Wallet, MessageSquare } from "lucide-react";
 import Link from 'next/link';
-import { useAuth, useUser } from "@/firebase";
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { doc } from 'firebase/firestore';
 
 export default function UserNav() {
   const { user } = useUser();
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile } = useDoc<{isEmployee?: boolean}>(userDocRef);
 
   const handleSignOut = async () => {
     if (auth) {
@@ -63,18 +84,66 @@ export default function UserNav() {
               <span>Profile</span>
             </DropdownMenuItem>
           </Link>
-          <Link href="/account" passHref>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+          <Link href="/orders" passHref>
+             <DropdownMenuItem>
+                <ListOrdered className="mr-2 h-4 w-4" />
+                <span>Orders</span>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem disabled>
+            <Wallet className="mr-2 h-4 w-4" />
+            <span>Wallet</span>
+            <DropdownMenuShortcut>Soon</DropdownMenuShortcut>
+          </DropdownMenuItem>
+           <DropdownMenuItem disabled>
+            <MessageSquare className="mr-2 h-4 w-4" />
+            <span>Chat Support</span>
+            <DropdownMenuShortcut>Soon</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        
+        {userProfile?.isEmployee && (
+            <>
+              <DropdownMenuSeparator />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Building className="mr-2 h-4 w-4" />
+                    <span>Hexa Vision</span>
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Switch to Hexa Vision Panel?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You are about to be redirected to the Hexa Vision SMM panel. Do you want to continue?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => router.push('/hexavision/dashboard')}>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+          )}
+
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+             <Link href="/account" passHref>
+                <DropdownMenuItem>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+                </DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+            </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
