@@ -6,8 +6,8 @@ import { CartProvider } from '@/context/CartContext';
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'Slice-Style Store',
-  description: 'A Slice-inspired shopping experience with a modern, premium feel.',
+  title: 'SliceX Store',
+  description: 'A SliceX-inspired shopping experience with a modern, premium feel.',
 };
 
 export default function RootLayout({
