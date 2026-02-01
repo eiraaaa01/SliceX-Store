@@ -180,8 +180,9 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
     useEffect(() => {
       if (isLoading) {
         showLoading();
-      } else {
-        hideLoading();
+        return () => {
+          hideLoading();
+        };
       }
     }, [isLoading, showLoading, hideLoading]);
 
