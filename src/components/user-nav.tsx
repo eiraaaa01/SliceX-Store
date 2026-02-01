@@ -53,6 +53,8 @@ export default function UserNav() {
     if (auth) {
       showLoading();
       await signOut(auth);
+      // This is a special case. We want to clear the loading indicator immediately
+      // on the login page, so we don't call hideLoading() here.
       router.push('/');
     }
   }
@@ -97,12 +99,12 @@ export default function UserNav() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem>
             <Wallet className="mr-2 h-4 w-4" />
             <span>Coins</span>
             <DropdownMenuShortcut>{userProfile?.coins ?? 0}</DropdownMenuShortcut>
           </DropdownMenuItem>
-           <DropdownMenuItem disabled>
+           <DropdownMenuItem>
             <MessageSquare className="mr-2 h-4 w-4" />
             <span>Chat Support</span>
             <DropdownMenuShortcut>Soon</DropdownMenuShortcut>
