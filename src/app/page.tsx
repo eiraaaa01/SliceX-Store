@@ -12,19 +12,19 @@ export default function LoginPage() {
   const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
-    sessionStorage.removeItem('profileCompletionInProgress');
-
     if (isUserLoading) {
       showLoading();
-    } else {
-      hideLoading();
+      return () => hideLoading();
     }
+  }, [isUserLoading, showLoading, hideLoading]);
+
+  useEffect(() => {
+    sessionStorage.removeItem('profileCompletionInProgress');
 
     if (!isUserLoading && user) {
-      showLoading();
       router.replace('/home');
     }
-  }, [user, isUserLoading, router, showLoading, hideLoading]);
+  }, [user, isUserLoading, router]);
 
   if (isUserLoading || user) {
      return null;

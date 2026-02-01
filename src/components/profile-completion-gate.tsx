@@ -170,15 +170,17 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
 
     const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
+    const isLoading = isUserLoading || isProfileLoading;
 
     useEffect(() => {
-        if (isUserLoading || isProfileLoading) {
+        if (isLoading) {
             showLoading();
-        } else {
-            hideLoading();
+            return () => hideLoading();
         }
+    }, [isLoading, showLoading, hideLoading]);
 
-        if (isUserLoading || isProfileLoading || !user) {
+    useEffect(() => {
+        if (isLoading || !user) {
             return;
         }
 
@@ -194,13 +196,13 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
             setShowModal(false);
         }
 
-    }, [user, isUserLoading, userProfile, isProfileLoading, showLoading, hideLoading]);
+    }, [user, userProfile, isLoading]);
 
     const handleComplete = () => {
         setShowModal(false);
     };
 
-    if (isUserLoading || isProfileLoading) {
+    if (isLoading) {
         return null;
     }
     

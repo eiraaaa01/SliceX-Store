@@ -59,8 +59,7 @@ export default function AccountPage() {
   useEffect(() => {
     if (isProfileLoading) {
       showLoading();
-    } else {
-      hideLoading();
+      return () => hideLoading();
     }
   }, [isProfileLoading, showLoading, hideLoading]);
 

@@ -21,6 +21,13 @@ export default function EmailVerificationGate({ children }: { children: React.Re
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const { showLoading, hideLoading } = useLoading();
 
+    useEffect(() => {
+        if (isUserLoading) {
+            showLoading();
+            return () => hideLoading();
+        }
+    }, [isUserLoading, showLoading, hideLoading]);
+
     // This effect handles the timer and periodic user reload
     useEffect(() => {
         // Only run this logic for unverified users
@@ -76,15 +83,10 @@ export default function EmailVerificationGate({ children }: { children: React.Re
 
 
     useEffect(() => {
-        if (isUserLoading) {
-            showLoading();
-        } else {
-            hideLoading();
-        }
         if (!isUserLoading && !user) {
             router.push('/');
         }
-    }, [user, isUserLoading, router, showLoading, hideLoading]);
+    }, [user, isUserLoading, router]);
 
     const handleResendVerification = async () => {
         if (user) {
