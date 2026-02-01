@@ -80,7 +80,15 @@ export default function AccountPage() {
             }, { merge: true });
             toast({ title: "Profile Updated", description: "Your profile has been updated successfully." });
         } catch (error: any) {
-            toast({ variant: "destructive", title: "Error", description: error.message });
+            if (error.code === 'auth/invalid-profile-attribute') {
+                toast({
+                    variant: "destructive",
+                    title: "Feature Not Available",
+                    description: "Updating profile picture is not available for now.",
+                });
+            } else {
+                toast({ variant: "destructive", title: "Error", description: error.message });
+            }
         }
     }
   };
