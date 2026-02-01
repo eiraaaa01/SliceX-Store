@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from './ui/card';
 import { Button } from './ui/button';
-import { useAuth } from '@/firebase/provider';
-import { signOut, sendEmailVerification } from 'firebase/auth';
+import { sendEmailVerification } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from "@/components/ui/progress";
 
@@ -15,7 +14,6 @@ const VERIFICATION_TIMEOUT_SECONDS = 120; // 2 minutes
 export default function EmailVerificationGate({ children }: { children: React.ReactNode }) {
     const { user, isUserLoading } = useUser();
     const router = useRouter();
-    const auth = useAuth();
     const { toast } = useToast();
     const [timeLeft, setTimeLeft] = useState(VERIFICATION_TIMEOUT_SECONDS);
     const [isChecking, setIsChecking] = useState(false);
@@ -80,13 +78,6 @@ export default function EmailVerificationGate({ children }: { children: React.Re
             router.push('/');
         }
     }, [user, isUserLoading, router]);
-
-    const handleLogout = async () => {
-        if (auth) {
-            await signOut(auth);
-            router.push('/');
-        }
-    };
 
     const handleResendVerification = async () => {
         if (user) {
@@ -171,8 +162,7 @@ export default function EmailVerificationGate({ children }: { children: React.Re
                        
                     </CardContent>
                     <CardFooter className="flex flex-col sm:flex-row gap-2">
-                        <Button onClick={handleResendVerification} className="w-full sm:w-auto flex-grow" disabled={isChecking}>Resend Verification Email</Button>
-                        <Button variant="outline" onClick={handleLogout} className="w-full sm:w-auto flex-grow">Sign Out</Button>
+                        <Button onClick={handleResendVerification} className="w-full" disabled={isChecking}>Resend Verification Email</Button>
                     </CardFooter>
                 </Card>
             </div>
