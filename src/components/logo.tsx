@@ -11,8 +11,12 @@ export function Logo({ className }: { className?: string }) {
         xmlns="http://www.w3.org/2000/svg"
         className="text-primary"
        >
-        <path d="M2.5 10.5C2.5 5.52944 6.52944 1.5 11.5 1.5C16.4706 1.5 20.5 5.52944 20.5 10.5C20.5 15.4706 17 21.5 11.5 21.5C6 21.5 2.5 15.4706 2.5 10.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-        <path d="M11.5 1.5L21.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+        <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M2 7L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M22 7L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 22V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7 4.5L17 9.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M17 14.5L7 19.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
        </svg>
       <span className="font-headline text-lg font-bold text-foreground tracking-wide">
         Slice Store
