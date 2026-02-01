@@ -146,7 +146,7 @@ export default function UserNav() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
+                                <AlertDialogAction onClick={() => router.push('/hexavision/dashboard')}>Continue</AlertDialogAction>
                             </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
@@ -168,7 +168,7 @@ export default function UserNav() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
+                                <AlertDialogAction onClick={() => router.push('/hexavision/services')}>Continue</AlertDialogAction>
                             </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
