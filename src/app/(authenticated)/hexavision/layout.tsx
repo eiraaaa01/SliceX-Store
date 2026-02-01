@@ -38,28 +38,33 @@ export default function HexaVisionLayout({
   }, [firestore, user]);
 
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isEmployee?: boolean}>(userDocRef);
+  const isLoading = isAuthLoading || isProfileLoading;
 
   useEffect(() => {
-    const isLoading = isAuthLoading || isProfileLoading;
     if (isLoading) {
       showLoading();
     } else {
-      // If we are done loading, check for authorization.
-      if (!user || !userProfile?.isEmployee) {
-        // If not authorized, redirect. The loading indicator will persist until the new page loads and calls hideLoading.
-        router.replace('/home');
-      } else {
-        // If authorized, hide the loading indicator.
-        hideLoading();
-      }
+      hideLoading();
     }
-  }, [user, userProfile, isAuthLoading, isProfileLoading, router, showLoading, hideLoading]);
+  }, [isLoading, showLoading, hideLoading]);
+
+  useEffect(() => {
+    if (isLoading) {
+      return; // Wait for loading to complete
+    }
+
+    // Once loading is done, check for authorization
+    if (!user || !userProfile?.isEmployee) {
+      router.replace('/home');
+    }
+  }, [isLoading, user, userProfile, router]);
+
 
   const isActive = (path: string) => pathname.startsWith(path);
 
-  // Render null if still loading or if the user is not authorized.
+  // Render null if still loading or if the user is not (yet) authorized.
   // The useEffect above handles the redirection and loading indicator.
-  if (isAuthLoading || isProfileLoading || !userProfile?.isEmployee) {
+  if (isLoading || !userProfile?.isEmployee) {
     return null;
   }
 
