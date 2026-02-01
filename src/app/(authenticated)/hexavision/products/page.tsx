@@ -54,7 +54,7 @@ const emptyProduct: Partial<Product> = {
   originalPrice: 0,
   imageUrl: '',
   imageHint: '',
-  shippingDate: '',
+  shippingDays: 0,
 };
 
 export default function ProductsPage() {
@@ -258,8 +258,8 @@ export default function ProductsPage() {
               <Input id="imageHint" value={editingProduct?.imageHint || ''} onChange={handleInputChange} />
             </div>
              <div className="grid gap-2">
-              <Label htmlFor="shippingDate">Shipping Date</Label>
-              <Input id="shippingDate" type="date" value={editingProduct?.shippingDate || ''} onChange={handleInputChange} />
+                <Label htmlFor="shippingDays">Shipping Days</Label>
+                <Input id="shippingDays" type="number" value={editingProduct?.shippingDays ?? ''} onChange={handleNumberInputChange} />
             </div>
           </div>
           <DialogFooter>

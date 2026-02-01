@@ -4,7 +4,7 @@ export type Product = {
   price: number;
   originalPrice?: number;
   description: string;
-  shippingDate?: string;
+  shippingDays?: number;
   imageUrl: string;
   imageHint: string;
 };

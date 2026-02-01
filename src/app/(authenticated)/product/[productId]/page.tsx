@@ -72,9 +72,13 @@ export default function ProductDetailPage() {
                 <div className="flex flex-col h-full py-4">
                     <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-2">{fullProduct.name}</h1>
                     <p className="text-muted-foreground text-lg mb-6">{fullProduct.description}</p>
-                     {fullProduct.shippingDate && (
+                     {fullProduct.shippingDays !== undefined && fullProduct.shippingDays > 0 && (
                         <p className="text-sm text-muted-foreground mb-6">
-                            Estimated shipping: {new Date(fullProduct.shippingDate).toLocaleDateString()}
+                            Estimated shipping: {(() => {
+                                const date = new Date();
+                                date.setDate(date.getDate() + fullProduct.shippingDays!);
+                                return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                            })()}
                         </p>
                     )}
                     <div className="mt-auto">
