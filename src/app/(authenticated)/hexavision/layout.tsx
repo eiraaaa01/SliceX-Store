@@ -44,23 +44,22 @@ export default function HexaVisionLayout({
     if (isLoading) {
       showLoading();
     } else {
-      hideLoading();
-    }
-    
-    if (!isLoading) {
+      // If we are done loading, check for authorization.
       if (!user || !userProfile?.isEmployee) {
+        // If not authorized, redirect. The loading indicator will persist until the new page loads and calls hideLoading.
         router.replace('/home');
+      } else {
+        // If authorized, hide the loading indicator.
+        hideLoading();
       }
     }
   }, [user, userProfile, isAuthLoading, isProfileLoading, router, showLoading, hideLoading]);
 
   const isActive = (path: string) => pathname.startsWith(path);
 
-  if (isAuthLoading || isProfileLoading || !userProfile) {
-    return null;
-  }
-  
-  if (!userProfile.isEmployee) {
+  // Render null if still loading or if the user is not authorized.
+  // The useEffect above handles the redirection and loading indicator.
+  if (isAuthLoading || isProfileLoading || !userProfile?.isEmployee) {
     return null;
   }
 
