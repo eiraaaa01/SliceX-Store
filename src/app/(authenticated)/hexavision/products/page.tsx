@@ -68,7 +68,7 @@ export default function ProductsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const { toast } = useToast();
-  const { withLoading } = useLoading();
+  const { showLoading, hideLoading } = useLoading();
 
   const handleAddNew = () => {
     setEditingProduct(emptyProduct);
@@ -80,26 +80,30 @@ export default function ProductsPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = withLoading(async (productId: string) => {
+  const handleDelete = async (productId: string) => {
     if (!firestore) return;
+    showLoading();
     try {
       await deleteDoc(doc(firestore, 'products', productId));
       toast({
         title: "Product Deleted",
         description: "The product has been successfully deleted.",
       });
+      window.location.reload();
     } catch(error: any) {
+        hideLoading();
         toast({
             variant: "destructive",
             title: "Error Deleting Product",
             description: error.message,
         });
     }
-  });
+  };
 
-  const handleSave = withLoading(async () => {
+  const handleSave = async () => {
     if (!firestore || !productsCollectionRef || !editingProduct) return;
-
+    
+    showLoading();
     try {
         if ('id' in editingProduct && editingProduct.id) {
             // Update existing product
@@ -117,16 +121,16 @@ export default function ProductsPage() {
                 description: "The new product has been successfully added.",
             });
         }
-        setIsDialogOpen(false);
-        setEditingProduct(null);
+        window.location.reload();
     } catch(error: any) {
+        hideLoading();
         toast({
             variant: "destructive",
             title: "Error Saving Product",
             description: error.message,
         });
     }
-  });
+  };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
