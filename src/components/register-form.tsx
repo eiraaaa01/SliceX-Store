@@ -108,6 +108,7 @@ export default function RegisterForm() {
       
       await updateProfile(user, { displayName: username });
       await sendEmailVerification(userCredential.user);
+      sessionStorage.removeItem('profileCompletionInProgress');
       router.push('/home');
     } catch (error: any) {
       setError(error.message);
