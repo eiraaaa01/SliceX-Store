@@ -95,7 +95,7 @@ export default function LoginForm() {
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
           <CardDescription className="text-muted-foreground">
-            Enter your credentials to access your panel
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">

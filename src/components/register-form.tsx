@@ -128,7 +128,7 @@ export default function RegisterForm() {
             <CardHeader className="text-center">
                 <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
                 <CardDescription className="text-muted-foreground">
-                Start your journey with Hexa Vision. It&apos;s free!
+                Create your account to start shopping.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
