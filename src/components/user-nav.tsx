@@ -127,27 +127,53 @@ export default function UserNav() {
         
         {(userProfile?.isAdmin || userProfile?.isEmployee) && (
             <>
-              <DropdownMenuSeparator />
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <Building className="mr-2 h-4 w-4" />
-                    <span>{userProfile?.isAdmin ? "Admin Panel" : "Hexa Vision"}</span>
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Switch to {userProfile?.isAdmin ? "Admin Panel" : "Hexa Vision"}?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You are about to be redirected to the {userProfile?.isAdmin ? "Admin panel" : "Hexa Vision SMM panel"}. Do you want to continue?
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                    {userProfile?.isAdmin && (
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Building className="mr-2 h-4 w-4" />
+                                <span>Admin Panel</span>
+                            </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Switch to Admin Panel?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                You are about to be redirected to the Admin panel. Do you want to continue?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                    {userProfile?.isEmployee && (
+                         <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Building className="mr-2 h-4 w-4" />
+                                <span>Hexa Vision</span>
+                            </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Switch to Hexa Vision?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                You are about to be redirected to the Hexa Vision SMM panel. Do you want to continue?
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => router.push('/hexavision')}>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                </DropdownMenuGroup>
             </>
         )}
 
