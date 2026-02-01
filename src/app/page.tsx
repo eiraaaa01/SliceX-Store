@@ -4,27 +4,30 @@ import LoginForm from "@/components/login-form";
 import { useEffect } from "react";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function LoginPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
-    // Clear the profile completion flag when the user visits the login page
-    // to prevent issues from previous incomplete sign-up attempts.
     sessionStorage.removeItem('profileCompletionInProgress');
 
+    if (isUserLoading) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+
     if (!isUserLoading && user) {
+      showLoading();
       router.replace('/home');
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading, router, showLoading, hideLoading]);
 
   if (isUserLoading || user) {
-     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <p>Loading...</p>
-      </div>
-    );
+     return null;
   }
 
   return (

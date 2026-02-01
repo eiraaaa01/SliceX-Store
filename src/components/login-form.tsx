@@ -19,6 +19,7 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
+import { useLoading } from "@/context/LoadingContext";
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24px" height="24px" {...props}>
@@ -39,6 +40,7 @@ export default function LoginForm() {
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const { showLoading, hideLoading } = useLoading();
 
   const handleGoogleSignIn = async () => {
     setError(null);
@@ -48,11 +50,13 @@ export default function LoginForm() {
     }
 
     setIsSubmitting(true);
+    showLoading();
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
       router.push('/home');
     } catch (error: any) {
+      hideLoading();
       setError(error.message);
        toast({
         variant: "destructive",
@@ -74,10 +78,12 @@ export default function LoginForm() {
     }
 
     setIsSubmitting(true);
+    showLoading();
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/home');
     } catch (error: any) {
+      hideLoading();
       let description = "An unexpected error occurred. Please try again.";
       if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
         description = "No account found with this email. Please click 'Sign up' to create an account.";

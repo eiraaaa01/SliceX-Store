@@ -19,6 +19,7 @@ import UserNav from "@/components/user-nav";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from 'firebase/firestore';
 import { useEffect } from "react";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function HexaVisionLayout({
   children,
@@ -29,6 +30,7 @@ export default function HexaVisionLayout({
   const router = useRouter();
   const { user, isUserLoading: isAuthLoading } = useUser();
   const firestore = useFirestore();
+  const { showLoading, hideLoading } = useLoading();
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -38,26 +40,27 @@ export default function HexaVisionLayout({
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isEmployee?: boolean}>(userDocRef);
 
   useEffect(() => {
-    if (!isAuthLoading && !isProfileLoading) {
+    const isLoading = isAuthLoading || isProfileLoading;
+    if (isLoading) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+    
+    if (!isLoading) {
       if (!user || !userProfile?.isEmployee) {
         router.replace('/home');
       }
     }
-  }, [user, userProfile, isAuthLoading, isProfileLoading, router]);
+  }, [user, userProfile, isAuthLoading, isProfileLoading, router, showLoading, hideLoading]);
 
   const isActive = (path: string) => pathname.startsWith(path);
 
   if (isAuthLoading || isProfileLoading || !userProfile) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <p>Loading...</p>
-      </div>
-    );
+    return null;
   }
   
   if (!userProfile.isEmployee) {
-    // This will be briefly rendered before the useEffect kicks in to redirect.
-    // It prevents rendering the layout for non-employees.
     return null;
   }
 

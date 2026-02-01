@@ -18,11 +18,13 @@ import { Eye, EyeOff, User as UserIcon } from "lucide-react";
 import { doc, setDoc } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useLoading } from "@/context/LoadingContext";
 
 export default function AccountPage() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const { withLoading } = useLoading();
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -66,7 +68,7 @@ export default function AccountPage() {
     }
   };
 
-  const handleProfileUpdate = async () => {
+  const handleProfileUpdate = withLoading(async () => {
     if(user && userDocRef) {
         try {
             await updateProfile(user, { 
@@ -91,9 +93,9 @@ export default function AccountPage() {
             }
         }
     }
-  };
+  });
 
-  const handlePasswordUpdate = async () => {
+  const handlePasswordUpdate = withLoading(async () => {
     if (!user) return;
     if (newPassword !== confirmNewPassword) {
       toast({ variant: "destructive", title: "Error", description: "New passwords do not match." });
@@ -117,7 +119,7 @@ export default function AccountPage() {
     } catch (error: any) {
       toast({ variant: "destructive", title: "Error", description: error.message });
     }
-  };
+  });
 
   const fallbackAvatar = `https://picsum.photos/seed/${user?.uid || 'fallback'}/128/128`;
   const avatarSrc = photoPreview || user?.photoURL || fallbackAvatar;

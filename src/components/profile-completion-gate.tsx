@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff } from 'lucide-react';
+import { useLoading } from '@/context/LoadingContext';
 
 
 function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: () => void }) {
@@ -25,6 +26,7 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
 
     const firestore = useFirestore();
     const { toast } = useToast();
+    const { withLoading } = useLoading();
     const isGoogleUser = user.providerData.some(p => p.providerId === 'google.com');
 
     const handleSubmit = async (e: FormEvent) => {
@@ -48,8 +50,7 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
         setError(null);
         setIsSubmitting(true);
 
-        try {
-            // Use a transaction to atomically check for username and create user doc
+        const completeProfileAction = async () => {
             await runTransaction(firestore, async (transaction) => {
                 const usernameDocRef = doc(firestore, "usernames", username.toLowerCase());
                 const usernameDoc = await transaction.get(usernameDocRef);
@@ -86,6 +87,10 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
             sessionStorage.removeItem('profileCompletionInProgress');
             onComplete();
 
+        };
+
+        try {
+            await withLoading(completeProfileAction)();
         } catch (err: any) {
             setError(err.message);
             toast({
@@ -161,11 +166,18 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
     const [showModal, setShowModal] = useState(false);
+    const { showLoading, hideLoading } = useLoading();
 
     const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
     useEffect(() => {
+        if (isUserLoading || isProfileLoading) {
+            showLoading();
+        } else {
+            hideLoading();
+        }
+
         if (isUserLoading || isProfileLoading || !user) {
             return;
         }
@@ -182,18 +194,14 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
             setShowModal(false);
         }
 
-    }, [user, isUserLoading, userProfile, isProfileLoading]);
+    }, [user, isUserLoading, userProfile, isProfileLoading, showLoading, hideLoading]);
 
     const handleComplete = () => {
         setShowModal(false);
     };
 
     if (isUserLoading || isProfileLoading) {
-        return (
-            <div className="flex h-screen w-full items-center justify-center">
-                <p>Loading...</p>
-            </div>
-        );
+        return null;
     }
     
     return (

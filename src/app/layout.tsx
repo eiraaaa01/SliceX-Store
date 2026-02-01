@@ -4,10 +4,12 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { CartProvider } from '@/context/CartContext';
 import { FirebaseClientProvider } from '@/firebase';
+import { LoadingProvider } from '@/context/LoadingContext';
+import LoadingIndicator from '@/components/loading-indicator';
 
 export const metadata: Metadata = {
   title: 'SliceX Store',
-  description: 'A SliceX-inspired shopping experience with a modern, premium feel.',
+  description: 'A SliceX-inspired shopping experience with a modern, premium feel with quality product.',
 };
 
 export default function RootLayout({
@@ -32,9 +34,12 @@ export default function RootLayout({
         )}
       >
         <FirebaseClientProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
+          <LoadingProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+            <LoadingIndicator />
+          </LoadingProvider>
         </FirebaseClientProvider>
         <Toaster />
       </body>

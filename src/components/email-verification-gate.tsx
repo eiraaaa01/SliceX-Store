@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { sendEmailVerification } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from "@/components/ui/progress";
+import { useLoading } from '@/context/LoadingContext';
 
 const VERIFICATION_TIMEOUT_SECONDS = 120; // 2 minutes
 
@@ -18,6 +19,7 @@ export default function EmailVerificationGate({ children }: { children: React.Re
     const [timeLeft, setTimeLeft] = useState(VERIFICATION_TIMEOUT_SECONDS);
     const [isChecking, setIsChecking] = useState(false);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const { showLoading, hideLoading } = useLoading();
 
     // This effect handles the timer and periodic user reload
     useEffect(() => {
@@ -74,10 +76,15 @@ export default function EmailVerificationGate({ children }: { children: React.Re
 
 
     useEffect(() => {
+        if (isUserLoading) {
+            showLoading();
+        } else {
+            hideLoading();
+        }
         if (!isUserLoading && !user) {
             router.push('/');
         }
-    }, [user, isUserLoading, router]);
+    }, [user, isUserLoading, router, showLoading, hideLoading]);
 
     const handleResendVerification = async () => {
         if (user) {
@@ -122,11 +129,7 @@ export default function EmailVerificationGate({ children }: { children: React.Re
     }
 
     if (isUserLoading) {
-        return (
-            <div className="flex h-screen items-center justify-center">
-                <p>Loading...</p>
-            </div>
-        );
+        return null;
     }
 
     if (user && !user.emailVerified) {
