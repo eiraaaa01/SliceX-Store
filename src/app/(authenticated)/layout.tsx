@@ -10,6 +10,8 @@ import Cart from '@/components/Cart';
 import { usePathname } from 'next/navigation';
 import { ShoppingCart } from 'lucide-react';
 import DraggableHomeButton from '@/components/DraggableHomeButton';
+import { useLoading } from '@/context/LoadingContext';
+import { useEffect } from 'react';
 
 
 export default function AuthenticatedLayout({
@@ -19,6 +21,11 @@ export default function AuthenticatedLayout({
 }) {
   const { cartCount } = useCart();
   const pathname = usePathname();
+  const { hideLoading } = useLoading();
+
+  useEffect(() => {
+    hideLoading();
+  }, [pathname, hideLoading]);
 
   const isHexaVisionRoute = pathname.startsWith('/hexavision');
 

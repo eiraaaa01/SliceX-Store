@@ -16,7 +16,6 @@ import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, User as UserIcon } from "lucide-react";
 import { doc, setDoc } from "firebase/firestore";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useLoading } from "@/context/LoadingContext";
 
@@ -24,7 +23,7 @@ export default function AccountPage() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const { withLoading } = useLoading();
+  const { withLoading, showLoading, hideLoading } = useLoading();
   
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -56,6 +55,14 @@ export default function AccountPage() {
       setPhotoPreview(user.photoURL || null);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (isProfileLoading) {
+      showLoading();
+    } else {
+      hideLoading();
+    }
+  }, [isProfileLoading, showLoading, hideLoading]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -124,6 +131,10 @@ export default function AccountPage() {
   const fallbackAvatar = `https://picsum.photos/seed/${user?.uid || 'fallback'}/128/128`;
   const avatarSrc = photoPreview || user?.photoURL || fallbackAvatar;
 
+  if (isProfileLoading) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -140,16 +151,12 @@ export default function AccountPage() {
           </CardHeader>
           <CardContent className="grid gap-6">
             <div className="flex items-center gap-4">
-                {isProfileLoading ? (
-                    <Skeleton className="h-24 w-24 rounded-full" />
-                ) : (
-                    <Avatar className="h-24 w-24 border">
-                        <AvatarImage src={avatarSrc} alt="User profile picture" data-ai-hint="animal plant" />
-                        <AvatarFallback>
-                            <UserIcon className="h-10 w-10 text-muted-foreground" />
-                        </AvatarFallback>
-                    </Avatar>
-                )}
+                <Avatar className="h-24 w-24 border">
+                    <AvatarImage src={avatarSrc} alt="User profile picture" data-ai-hint="animal plant" />
+                    <AvatarFallback>
+                        <UserIcon className="h-10 w-10 text-muted-foreground" />
+                    </AvatarFallback>
+                </Avatar>
                 <div>
                     <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
                         Change Picture
@@ -167,11 +174,11 @@ export default function AccountPage() {
 
             <div className="grid gap-2">
               <Label htmlFor="name">Name</Label>
-              {isProfileLoading ? <Skeleton className="h-10 w-full" /> : <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />}
+              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="username">Username</Label>
-              {isProfileLoading ? <Skeleton className="h-10 w-full" /> : <Input id="username" value={userProfile?.username || ''} disabled />}
+              <Input id="username" value={userProfile?.username || ''} disabled />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
