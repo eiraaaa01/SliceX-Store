@@ -51,6 +51,9 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
         setIsSubmitting(true);
 
         const completeProfileAction = async () => {
+            if (!firestore) {
+                throw new Error("Firestore is not available.");
+            }
             await runTransaction(firestore, async (transaction) => {
                 const usernameDocRef = doc(firestore, "usernames", username.toLowerCase());
                 const usernameDoc = await transaction.get(usernameDocRef);
@@ -71,6 +74,7 @@ function ProfileCompletionModal({ user, onComplete }: { user: User, onComplete: 
                     isEmailVerified: user.emailVerified,
                     registrationDate: new Date().toISOString(),
                     coins: 0,
+                    walletBalance: 0,
                 });
             });
 
@@ -169,7 +173,7 @@ export default function ProfileCompletionGate({ children }: { children: React.Re
     const [showModal, setShowModal] = useState(false);
     const { showLoading, hideLoading } = useLoading();
 
-    const userDocRef = useMemoFirebase(() => (user ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
+    const userDocRef = useMemoFirebase(() => (user && firestore ? doc(firestore, 'users', user.uid) : null), [user, firestore]);
     const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
     const isLoading = isUserLoading || isProfileLoading;
 

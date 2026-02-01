@@ -45,6 +45,10 @@
         "coins": {
           "type": "number",
           "description": "The user's loyalty coin balance."
+        },
+        "walletBalance": {
+          "type": "number",
+          "description": "The user's wallet balance in the local currency."
         }
       },
       "required": [

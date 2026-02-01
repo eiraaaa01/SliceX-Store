@@ -26,7 +26,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { User as UserIcon, LogOut, Settings, Building, ListOrdered, Wallet, MessageSquare } from "lucide-react";
+import { User as UserIcon, LogOut, Settings, Building, ListOrdered, Wallet, MessageSquare, CreditCard } from "lucide-react";
 import Link from 'next/link';
 import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
@@ -47,7 +47,7 @@ export default function UserNav() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile } = useDoc<{isEmployee?: boolean, coins?: number}>(userDocRef);
+  const { data: userProfile } = useDoc<{isEmployee?: boolean, coins?: number, walletBalance?: number}>(userDocRef);
 
   const handleSignOut = async () => {
     if (auth) {
@@ -104,6 +104,12 @@ export default function UserNav() {
             <span>Coins</span>
             <DropdownMenuShortcut>{userProfile?.coins ?? 0}</DropdownMenuShortcut>
           </DropdownMenuItem>
+           <Link href="/wallet" passHref>
+                <DropdownMenuItem onClick={() => { if (pathname !== '/wallet') showLoading() }}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Wallet</span>
+                </DropdownMenuItem>
+            </Link>
            <DropdownMenuItem>
             <MessageSquare className="mr-2 h-4 w-4" />
             <span>Chat Support</span>
