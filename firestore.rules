@@ -33,5 +33,10 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if false;
     }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isEmployee();
+    }
   }
 }

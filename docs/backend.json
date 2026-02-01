@@ -73,6 +73,35 @@
       "required": [
         "uid"
       ]
+    },
+    "Product": {
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a product in the store.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "A short description of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the product."
+        },
+        "imageUrl": {
+            "type": "string",
+            "description": "URL of the product image.",
+            "format": "uri"
+        },
+        "imageHint": {
+            "type": "string",
+            "description": "Hint for AI image generation."
+        }
+      },
+      "required": ["name", "price", "description", "imageUrl"]
     }
   },
   "auth": {
@@ -102,6 +131,16 @@
             "$ref": "#/backend/entities/Username"
           },
           "description": "Stores unique usernames to prevent duplicates. The document ID is the username. Client-side creation is allowed via transaction but updates and deletes are disabled."
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores all available products."
         }
       }
     ]
