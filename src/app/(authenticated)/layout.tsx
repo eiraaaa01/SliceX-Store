@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Building } from 'lucide-react';
 import DraggableHomeButton from '@/components/DraggableHomeButton';
 
@@ -34,6 +34,9 @@ export default function AuthenticatedLayout({
   const { user } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isHexaVisionRoute = pathname.startsWith('/hexavision');
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -41,6 +44,16 @@ export default function AuthenticatedLayout({
   }, [firestore, user]);
 
   const { data: userProfile } = useDoc<{isEmployee?: boolean}>(userDocRef);
+
+  if (isHexaVisionRoute) {
+    return (
+      <EmailVerificationGate>
+        <ProfileCompletionGate>
+          {children}
+        </ProfileCompletionGate>
+      </EmailVerificationGate>
+    )
+  }
 
   return (
     <EmailVerificationGate>
