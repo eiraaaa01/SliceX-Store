@@ -156,10 +156,26 @@ export default function UserNav() {
                 <span>Settings</span>
                 </DropdownMenuItem>
             </Link>
-            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
-            </DropdownMenuItem>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log out</span>
+                    </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will end your current session and you will be returned to the sign-in page.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleSignOut}>Log out</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
