@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, type MouseEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { useLoading } from '@/context/LoadingContext';
 
 export default function DraggableHomeButton() {
   const router = useRouter();
+  const pathname = usePathname();
   const nodeRef = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
@@ -63,7 +64,9 @@ export default function DraggableHomeButton() {
     document.removeEventListener('mouseup', handleMouseUp);
     
     if (!isDraggingRef.current) {
-      showLoading();
+      if (pathname !== '/home') {
+        showLoading();
+      }
       router.push('/home');
     }
     // No need to reset isDraggingRef here, it's reset on mousedown.

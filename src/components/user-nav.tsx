@@ -30,7 +30,7 @@ import { User as UserIcon, LogOut, Settings, Building, ListOrdered, Wallet, Mess
 import Link from 'next/link';
 import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { doc } from 'firebase/firestore';
 import { useLoading } from "@/context/LoadingContext";
 
@@ -39,6 +39,7 @@ export default function UserNav() {
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
+  const pathname = usePathname();
   const { showLoading } = useLoading();
 
   const userDocRef = useMemoFirebase(() => {
@@ -82,13 +83,13 @@ export default function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <Link href="/account" passHref>
-            <DropdownMenuItem onClick={() => showLoading()}>
+            <DropdownMenuItem onClick={() => { if (pathname !== '/account') showLoading() }}>
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
           </Link>
           <Link href="/orders" passHref>
-             <DropdownMenuItem onClick={() => showLoading()}>
+             <DropdownMenuItem onClick={() => { if (pathname !== '/orders') showLoading() }}>
                 <ListOrdered className="mr-2 h-4 w-4" />
                 <span>Orders</span>
             </DropdownMenuItem>
@@ -127,7 +128,12 @@ export default function UserNav() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => { showLoading(); router.push('/hexavision/dashboard'); }}>Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={() => { 
+                      if (!pathname.startsWith('/hexavision')) {
+                        showLoading(); 
+                      }
+                      router.push('/hexavision/dashboard'); 
+                    }}>Continue</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -137,7 +143,7 @@ export default function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
              <Link href="/account" passHref>
-                <DropdownMenuItem onClick={() => showLoading()}>
+                <DropdownMenuItem onClick={() => { if (pathname !== '/account') showLoading() }}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
                 </DropdownMenuItem>
