@@ -1,29 +1,21 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
 import {
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet";
 import { useCart } from "@/context/CartContext";
 import { ScrollArea } from "./ui/scroll-area";
-import { X } from "lucide-react";
 
 export default function Cart() {
   const { cartItems, totalPrice } = useCart();
 
   return (
     <SheetContent className="flex flex-col w-full sm:max-w-md bg-[#0f1220] border-l border-border p-6">
-      <SheetHeader className="flex-row justify-between items-center mb-4">
+      <SheetHeader className="mb-4">
         <SheetTitle className="text-lg font-bold">Your Cart</SheetTitle>
-        <SheetClose asChild>
-           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-              <X className="h-6 w-6" />
-           </Button>
-        </SheetClose>
       </SheetHeader>
       
       {cartItems.length > 0 ? (
