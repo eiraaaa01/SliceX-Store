@@ -47,7 +47,7 @@ export default function UserNav() {
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile } = useDoc<{isEmployee?: boolean, coins?: number, walletBalance?: number}>(userDocRef);
+  const { data: userProfile } = useDoc<{isAdmin?: boolean, coins?: number, walletBalance?: number}>(userDocRef);
 
   const handleSignOut = async () => {
     if (auth) {
@@ -117,7 +117,7 @@ export default function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         
-        {userProfile?.isEmployee && (
+        {userProfile?.isAdmin && (
             <>
               <DropdownMenuSeparator />
               <AlertDialog>

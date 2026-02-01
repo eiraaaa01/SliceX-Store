@@ -28,9 +28,9 @@
           "type": "boolean",
           "description": "Indicates whether the user's email address has been verified."
         },
-        "isEmployee": {
+        "isAdmin": {
           "type": "boolean",
-          "description": "Indicates whether the user is an employee and has access to the Hexa Vision panel."
+          "description": "Indicates whether the user is an admin and has access to the Hexa Vision panel."
         },
         "registrationDate": {
           "type": "string",

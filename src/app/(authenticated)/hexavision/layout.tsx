@@ -37,7 +37,7 @@ export default function HexaVisionLayout({
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isEmployee?: boolean}>(userDocRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isAdmin?: boolean}>(userDocRef);
   const isLoading = isAuthLoading || isProfileLoading;
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function HexaVisionLayout({
     }
 
     // Once loading is done, check for authorization
-    if (!user || !userProfile?.isEmployee) {
+    if (!user || !userProfile?.isAdmin) {
       router.replace('/home');
     }
   }, [isLoading, user, userProfile, router]);
@@ -64,7 +64,7 @@ export default function HexaVisionLayout({
 
   // Render null if still loading or if the user is not (yet) authorized.
   // The useEffect above handles the redirection and loading indicator.
-  if (isLoading || !userProfile?.isEmployee) {
+  if (isLoading || !userProfile?.isAdmin) {
     return null;
   }
 
