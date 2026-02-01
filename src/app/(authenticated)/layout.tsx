@@ -21,7 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useRouter, usePathname } from 'next/navigation';
-import { Building } from 'lucide-react';
+import { Building, ShoppingCart } from 'lucide-react';
 import DraggableHomeButton from '@/components/DraggableHomeButton';
 
 
@@ -87,7 +87,8 @@ export default function AuthenticatedLayout({
                         )}
                         <SheetTrigger asChild>
                             <Button className="rounded-full font-semibold px-6">
-                                Cart ({cartCount})
+                                <ShoppingCart className="mr-2 h-4 w-4" />
+                                Cart{cartCount > 0 ? ` (${cartCount})` : ''}
                             </Button>
                         </SheetTrigger>
                         <UserNav />

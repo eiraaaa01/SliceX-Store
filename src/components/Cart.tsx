@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import { useCart } from "@/context/CartContext";
 import { ScrollArea } from "./ui/scroll-area";
+import { ShoppingCart } from "lucide-react";
 
 export default function Cart() {
   const { cartItems, totalPrice } = useCart();
@@ -41,6 +42,7 @@ export default function Cart() {
         </>
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center">
+          <ShoppingCart className="h-12 w-12 text-muted-foreground mb-4" />
           <p className="text-muted-foreground">Your cart is empty.</p>
         </div>
       )}
