@@ -41,6 +41,8 @@ export default function AccountPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
+  const isGoogleUser = user?.providerData.some(p => p.providerId === 'google.com');
+
   useEffect(() => {
     if (user) {
       setName(user.displayName || '');
@@ -95,7 +97,7 @@ export default function AccountPage() {
           Manage your account settings and personal information.
         </p>
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className={`grid gap-6 ${isGoogleUser ? '' : 'md:grid-cols-2'}`}>
         <Card>
           <CardHeader>
             <CardTitle>Profile Information</CardTitle>
@@ -120,44 +122,46 @@ export default function AccountPage() {
           </CardFooter>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Change Password</CardTitle>
-            <CardDescription>Set a new password for your account.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="current-password">Current Password</Label>
-              <div className="relative">
-                <Input id="current-password" type={showCurrentPassword ? "text" : "password"} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="pr-10"/>
-                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowCurrentPassword((prev) => !prev)}>
-                  {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <div className="relative">
-                <Input id="new-password" type={showNewPassword ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="pr-10"/>
-                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowNewPassword((prev) => !prev)}>
-                  {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-             <div className="grid gap-2">
-              <Label htmlFor="confirm-new-password">Confirm New Password</Label>
-              <div className="relative">
-                <Input id="confirm-new-password" type={showConfirmNewPassword ? "text" : "password"} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} className="pr-10"/>
-                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowConfirmNewPassword((prev) => !prev)}>
-                  {showConfirmNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button onClick={handlePasswordUpdate} className="ml-auto hover:brightness-110 transition-all duration-300">Update Password</Button>
-          </CardFooter>
-        </Card>
+        {!isGoogleUser && (
+            <Card>
+            <CardHeader>
+                <CardTitle>Change Password</CardTitle>
+                <CardDescription>Set a new password for your account.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+                <div className="grid gap-2">
+                <Label htmlFor="current-password">Current Password</Label>
+                <div className="relative">
+                    <Input id="current-password" type={showCurrentPassword ? "text" : "password"} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="pr-10"/>
+                    <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowCurrentPassword((prev) => !prev)}>
+                    {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                </div>
+                </div>
+                <div className="grid gap-2">
+                <Label htmlFor="new-password">New Password</Label>
+                <div className="relative">
+                    <Input id="new-password" type={showNewPassword ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="pr-10"/>
+                    <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowNewPassword((prev) => !prev)}>
+                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                </div>
+                </div>
+                <div className="grid gap-2">
+                <Label htmlFor="confirm-new-password">Confirm New Password</Label>
+                <div className="relative">
+                    <Input id="confirm-new-password" type={showConfirmNewPassword ? "text" : "password"} value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} className="pr-10"/>
+                    <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground" onClick={() => setShowConfirmNewPassword((prev) => !prev)}>
+                    {showConfirmNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                </div>
+                </div>
+            </CardContent>
+            <CardFooter>
+                <Button onClick={handlePasswordUpdate} className="ml-auto hover:brightness-110 transition-all duration-300">Update Password</Button>
+            </CardFooter>
+            </Card>
+        )}
       </div>
     </div>
   );
