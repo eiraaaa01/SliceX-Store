@@ -12,7 +12,7 @@ import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, doc, setDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { Product } from "@/lib/types";
 import { PlusCircle, MoreHorizontal, Pencil, Trash2, Package } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -45,7 +45,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useLoading } from "@/context/LoadingContext";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const emptyProduct: Partial<Product> = {
   name: '',
@@ -69,6 +68,13 @@ export default function ProductsPage() {
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const { toast } = useToast();
   const { showLoading, hideLoading } = useLoading();
+  
+  useEffect(() => {
+    if (isLoading) {
+      showLoading();
+      return () => hideLoading();
+    }
+  }, [isLoading, showLoading, hideLoading]);
 
   const handleAddNew = () => {
     setEditingProduct(emptyProduct);
@@ -142,6 +148,10 @@ export default function ProductsPage() {
     setEditingProduct(prev => ({...prev, [id]: parseFloat(value) || 0}));
   }
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <div>
         <div className="flex justify-between items-center mb-6">
@@ -163,73 +173,60 @@ export default function ProductsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading ? (
-             Array.from({ length: 5 }).map((_, i) => (
-              <TableRow key={i}>
-                <TableCell><Skeleton className="h-16 w-16 rounded-md" /></TableCell>
-                <TableCell><Skeleton className="h-6 w-32" /></TableCell>
-                <TableCell><Skeleton className="h-6 w-48" /></TableCell>
-                <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
-              </TableRow>
-            ))
-          ) : (
-            products?.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>
-                  {product.imageUrl ? (
-                    <Image src={product.imageUrl} alt={product.name} width={64} height={64} className="rounded-md object-cover" />
-                  ) : (
-                    <div className="h-16 w-16 rounded-md bg-muted flex items-center justify-center">
-                        <Package className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  )}
-                </TableCell>
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell className="max-w-xs truncate">{product.description}</TableCell>
-                <TableCell>₹{product.price.toFixed(2)}</TableCell>
-                <TableCell>₹{product.originalPrice?.toFixed(2) ?? 'N/A'}</TableCell>
-                <TableCell className="text-right">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleEdit(product)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
-                        </DropdownMenuItem>
-                         <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will permanently delete the product.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(product.id)}>Continue</AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
-          )}
+          {products?.map((product) => (
+            <TableRow key={product.id}>
+              <TableCell>
+                {product.imageUrl ? (
+                  <Image src={product.imageUrl} alt={product.name} width={64} height={64} className="rounded-md object-cover" />
+                ) : (
+                  <div className="h-16 w-16 rounded-md bg-muted flex items-center justify-center">
+                      <Package className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                )}
+              </TableCell>
+              <TableCell className="font-medium">{product.name}</TableCell>
+              <TableCell className="max-w-xs truncate">{product.description}</TableCell>
+              <TableCell>₹{product.price.toFixed(2)}</TableCell>
+              <TableCell>₹{product.originalPrice?.toFixed(2) ?? 'N/A'}</TableCell>
+              <TableCell className="text-right">
+                  <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => handleEdit(product)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                      </DropdownMenuItem>
+                       <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the product.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(product.id)}>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </DropdownMenuContent>
+                  </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

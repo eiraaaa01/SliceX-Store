@@ -8,10 +8,12 @@ import {
 import { DollarSign, ShoppingCart, Users } from "lucide-react";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from 'firebase/firestore';
-import { Skeleton } from "@/components/ui/skeleton";
+import { useLoading } from "@/context/LoadingContext";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
   const firestore = useFirestore();
+  const { showLoading, hideLoading } = useLoading();
 
   const usersCollectionRef = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -19,7 +21,19 @@ export default function DashboardPage() {
   }, [firestore]);
 
   const { data: users, isLoading } = useCollection(usersCollectionRef);
+
+  useEffect(() => {
+    if (isLoading) {
+      showLoading();
+      return () => hideLoading();
+    }
+  }, [isLoading, showLoading, hideLoading]);
+
   const totalUsers = users?.length ?? 0;
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <div>
@@ -57,11 +71,7 @@ export default function DashboardPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <Skeleton className="h-8 w-16 mt-1" />
-              ) : (
-                <div className="text-2xl font-bold">{totalUsers}</div>
-              )}
+              <div className="text-2xl font-bold">{totalUsers}</div>
               <p className="text-xs text-muted-foreground">
                 Total registered users in the store
               </p>

@@ -7,30 +7,16 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import type { Product } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ShoppingCart, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-function ProductDetailPageSkeleton() {
-    return (
-        <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-                <Skeleton className="rounded-lg h-80 md:h-full bg-card/50" />
-                <div className="flex flex-col">
-                    <Skeleton className="h-10 w-3/4 mb-4 bg-card/50" />
-                    <Skeleton className="h-24 w-full mb-6 bg-card/50" />
-                    <Skeleton className="h-12 w-1/3 mb-6 bg-card/50" />
-                    <Skeleton className="h-12 w-48 rounded-full bg-card/50" />
-                </div>
-            </div>
-        </div>
-    );
-}
+import { useLoading } from '@/context/LoadingContext';
+import { useEffect } from 'react';
 
 export default function ProductDetailPage() {
     const { productId } = useParams<{ productId: string }>();
     const firestore = useFirestore();
     const { addToCart } = useCart();
+    const { showLoading, hideLoading } = useLoading();
 
     const productDocRef = useMemoFirebase(() => {
         if (!firestore || !productId) return null;
@@ -39,8 +25,15 @@ export default function ProductDetailPage() {
 
     const { data: product, isLoading } = useDoc<Omit<Product, 'id'>>(productDocRef);
 
+    useEffect(() => {
+        if (isLoading) {
+            showLoading();
+            return () => hideLoading();
+        }
+    }, [isLoading, showLoading, hideLoading]);
+
     if (isLoading) {
-        return <ProductDetailPageSkeleton />;
+        return null;
     }
 
     if (!product) {
