@@ -78,11 +78,17 @@ export default function LoginForm() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/home');
     } catch (error: any) {
-      setError(error.message);
+      let description = "An unexpected error occurred. Please try again.";
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
+        description = "No account found with this email. Please click 'Sign up' to create an account.";
+      } else {
+        description = error.message;
+      }
+      setError(description);
        toast({
         variant: "destructive",
         title: "Sign In Failed",
-        description: error.message,
+        description: description,
       });
     } finally {
       setIsSubmitting(false);
@@ -126,7 +132,7 @@ export default function LoginForm() {
               </Button>
             </div>
           </div>
-           {error && <p className="text-destructive text-sm">{error}</p>}
+           {error && <p className="text-destructive text-sm text-center">{error}</p>}
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" disabled={isSubmitting} className="w-full hover:brightness-110 transition-all duration-300">
