@@ -42,6 +42,25 @@ export default function HexaVisionLayout({
   const isAdmin = userProfile?.isAdmin ?? false;
   const isEmployee = userProfile?.isEmployee ?? false;
   
+  const getPanelName = () => {
+    const adminPaths = ['/hexavision/dashboard', '/hexavision/products'];
+    const employeePaths = ['/hexavision/services', '/hexavision/orders'];
+
+    if (employeePaths.some(path => pathname.startsWith(path))) {
+        return "Hexa Vision";
+    }
+    if (adminPaths.some(path => pathname.startsWith(path))) {
+        return "Admin Panel";
+    }
+    
+    // Fallback for the root /hexavision page before redirect
+    if (isAdmin) return "Admin Panel";
+    if (isEmployee) return "Hexa Vision";
+
+    return "";
+  }
+  const panelName = getPanelName();
+
   useEffect(() => {
     if (isLoading) {
       showLoading();
@@ -54,34 +73,19 @@ export default function HexaVisionLayout({
       return; // Wait for loading to complete
     }
 
+    if (panelName) {
+      document.title = panelName;
+    }
+
     // Once loading is done, check for authorization
     if (!user || (!isAdmin && !isEmployee)) {
       router.replace('/home');
     }
-  }, [isLoading, user, isAdmin, isEmployee, router]);
+  }, [isLoading, user, isAdmin, isEmployee, router, panelName]);
 
 
   const isActive = (path: string) => pathname.startsWith(path);
   
-  const getPanelName = () => {
-    const adminPaths = ['/hexavision/dashboard', '/hexavision/products'];
-    const employeePaths = ['/hexavision/services', '/hexavision/orders'];
-
-    if (adminPaths.some(path => pathname.startsWith(path))) {
-        return "Admin Panel";
-    }
-    if (employeePaths.some(path => pathname.startsWith(path))) {
-        return "Hexa Vision";
-    }
-    
-    // Fallback for the root /hexavision page before redirect
-    if (isAdmin) return "Admin Panel";
-    if (isEmployee) return "Hexa Vision";
-
-    return "";
-  }
-  const panelName = getPanelName();
-
   // Render null if still loading or if the user is not (yet) authorized.
   // The useEffect above handles the redirection and loading indicator.
   if (isLoading || (!isAdmin && !isEmployee)) {

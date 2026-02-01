@@ -10,6 +10,7 @@ import Cart from '@/components/Cart';
 import { usePathname } from 'next/navigation';
 import { ShoppingCart } from 'lucide-react';
 import DraggableHomeButton from '@/components/DraggableHomeButton';
+import { useEffect } from 'react';
 
 
 export default function AuthenticatedLayout({
@@ -21,6 +22,12 @@ export default function AuthenticatedLayout({
   const pathname = usePathname();
 
   const isHexaVisionRoute = pathname.startsWith('/hexavision');
+
+  useEffect(() => {
+    if (!isHexaVisionRoute) {
+        document.title = 'SliceX Store';
+    }
+  }, [isHexaVisionRoute, pathname]);
 
   if (isHexaVisionRoute) {
     return (
