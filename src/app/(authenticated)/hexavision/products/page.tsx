@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, doc, setDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { Product } from "@/lib/types";
-import { PlusCircle, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { PlusCircle, MoreHorizontal, Pencil, Trash2, Package } from "lucide-react";
 import React, { useState } from "react";
 import Image from "next/image";
 import {
@@ -178,7 +178,13 @@ export default function ProductsPage() {
             products?.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>
+                  {product.imageUrl ? (
                     <Image src={product.imageUrl} alt={product.name} width={64} height={64} className="rounded-md object-cover" />
+                  ) : (
+                    <div className="h-16 w-16 rounded-md bg-muted flex items-center justify-center">
+                        <Package className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell className="max-w-xs truncate">{product.description}</TableCell>
