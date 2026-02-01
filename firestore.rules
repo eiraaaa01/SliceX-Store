@@ -14,9 +14,13 @@ service cloud.firestore {
       return resource != null;
     }
 
+    function isEmployee() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isEmployee == true;
+    }
+
     match /users/{userId} {
       allow get: if isOwner(userId);
-      allow list: if false; 
+      allow list: if isEmployee(); 
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isOwner(userId) && isExistingDoc() && request.resource.data.id == resource.data.id;
       allow delete: if isOwner(userId) && isExistingDoc();
