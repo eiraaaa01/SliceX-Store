@@ -14,7 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { User as UserIcon, LogOut, Settings } from "lucide-react";
 import Link from 'next/link';
 import { useAuth, useUser } from "@/firebase";
@@ -22,7 +21,6 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 export default function UserNav() {
-  const avatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
   const { user } = useUser();
   const auth = useAuth();
   const router = useRouter();
@@ -43,7 +41,7 @@ export default function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9 border-2 border-primary/50 hover:border-primary transition-colors">
-            <AvatarImage src={user.photoURL || avatar?.imageUrl} alt={user.displayName || "User avatar"} />
+            <AvatarImage src={user.photoURL || ''} alt={user.displayName || "User avatar"} />
             <AvatarFallback>{user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
         </Button>
