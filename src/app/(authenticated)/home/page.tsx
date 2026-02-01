@@ -40,7 +40,7 @@ export default function HomePage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {statCards.map((card, index) => (
-          <Card key={index} className="bg-card/80 border-primary/20 backdrop-blur-sm hover:border-primary/40 transition-colors">
+          <Card key={index} className="hover:border-primary/40 transition-colors">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
               {card.icon}
@@ -54,7 +54,7 @@ export default function HomePage() {
       </div>
       
       <div>
-        <Card className="bg-card/80 border-primary/20 backdrop-blur-sm">
+        <Card>
             <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
                 <CardDescription>An overview of your recent orders.</CardDescription>

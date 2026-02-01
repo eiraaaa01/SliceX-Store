@@ -122,7 +122,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm border-primary/20 bg-card/80 backdrop-blur-sm">
+    <Card className="w-full max-w-sm bg-card shadow-xl">
         <form onSubmit={handleRegister}>
             <CardHeader className="text-center">
                 <CardTitle className="text-3xl font-bold">Create Account</CardTitle>

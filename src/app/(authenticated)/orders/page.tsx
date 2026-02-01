@@ -65,7 +65,7 @@ export default function OrdersPage() {
           Track the status of your recent orders.
         </p>
       </div>
-      <Card className="bg-card/80 border-primary/20 backdrop-blur-sm">
+      <Card>
         <CardContent className="pt-6">
           <Table>
             <TableHeader>

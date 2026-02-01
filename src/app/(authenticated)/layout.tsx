@@ -68,7 +68,7 @@ export default function AuthenticatedLayout({
             </SidebarContent>
           </Sidebar>
           <SidebarInset>
-            <header className="flex h-14 items-center gap-4 border-b bg-background/50 px-4 lg:h-[60px] lg:px-6 backdrop-blur-sm sticky top-0 z-10">
+            <header className="flex h-14 items-center gap-4 border-b bg-background/95 px-4 lg:h-[60px] lg:px-6 backdrop-blur-sm sticky top-0 z-10">
               <SidebarTrigger className="lg:hidden" />
               <div className="w-full flex-1">
                 {/* Can add breadcrumbs or search here */}

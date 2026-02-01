@@ -83,7 +83,7 @@ export default function AccountPage() {
         </p>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="bg-card/80 border-primary/20 backdrop-blur-sm">
+        <Card>
           <CardHeader>
             <CardTitle>Profile Information</CardTitle>
             <CardDescription>Update your personal details here.</CardDescription>
@@ -103,7 +103,7 @@ export default function AccountPage() {
           </CardFooter>
         </Card>
 
-        <Card className="bg-card/80 border-primary/20 backdrop-blur-sm">
+        <Card>
           <CardHeader>
             <CardTitle>Change Password</CardTitle>
             <CardDescription>Set a new password for your account.</CardDescription>

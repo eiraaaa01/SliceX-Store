@@ -142,7 +142,7 @@ export default function EmailVerificationGate({ children }: { children: React.Re
         const progress = (timeLeft / VERIFICATION_TIMEOUT_SECONDS) * 100;
         return (
             <div className="flex h-screen items-center justify-center bg-background p-4">
-                <Card className="w-full max-w-md text-center border-primary/20 bg-card/80 backdrop-blur-sm">
+                <Card className="w-full max-w-md text-center bg-card shadow-xl">
                     <CardHeader>
                         <CardTitle className="text-2xl font-bold">Verify Your Email</CardTitle>
                         <CardDescription>
