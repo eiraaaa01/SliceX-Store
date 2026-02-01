@@ -25,7 +25,7 @@ export default function Cart() {
               {cartItems.map((item) => (
                 <div key={item.id} className="flex justify-between items-center text-sm">
                   <span>{item.name} &times; {item.quantity}</span>
-                  <span>${(item.price * item.quantity).toFixed(2)}</span>
+                  <span>₹{(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -34,7 +34,7 @@ export default function Cart() {
             <div className="w-full text-lg border-t border-border pt-4">
               <div className="flex justify-between font-bold">
                 <span>Total:</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>₹{totalPrice.toFixed(2)}</span>
               </div>
             </div>
           </SheetFooter>

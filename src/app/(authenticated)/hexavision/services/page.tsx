@@ -33,7 +33,7 @@ export default function ServicesPage() {
           {services.map((service) => (
             <TableRow key={service.id}>
               <TableCell className="font-medium">{service.name}</TableCell>
-              <TableCell>${service.price}</TableCell>
+              <TableCell>₹{service.price}</TableCell>
               <TableCell>{service.min.toLocaleString()} / {service.max.toLocaleString()}</TableCell>
               <TableCell>{service.description}</TableCell>
               <TableCell className="text-right">

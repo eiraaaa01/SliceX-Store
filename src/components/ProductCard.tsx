@@ -21,7 +21,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         <h3 className="text-base font-semibold mb-1">{product.name}</h3>
         <span className="text-sm text-muted-foreground">{product.description}</span>
-        <p className="text-base font-bold my-3">${product.price}</p>
+        <p className="text-base font-bold my-3">₹{product.price}</p>
         <Button disabled className="w-full rounded-full font-semibold mt-auto">
           Coming Soon
         </Button>

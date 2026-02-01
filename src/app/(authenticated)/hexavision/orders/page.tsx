@@ -9,10 +9,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const orders = [
-    { id: "ORD001", service: "Instagram Followers", date: "2023-10-26", amount: "$25.00", status: "Completed" },
-    { id: "ORD002", service: "YouTube Views", date: "2023-10-25", amount: "$10.00", status: "In Progress" },
-    { id: "ORD003", service: "TikTok Likes", date: "2023-10-24", amount: "$5.00", status: "Completed" },
-    { id: "ORD004", service: "Twitter Retweets", date: "2023-10-23", amount: "$15.00", status: "Canceled" },
+    { id: "ORD001", service: "Instagram Followers", date: "2023-10-26", amount: "₹25.00", status: "Completed" },
+    { id: "ORD002", service: "YouTube Views", date: "2023-10-25", amount: "₹10.00", status: "In Progress" },
+    { id: "ORD003", service: "TikTok Likes", date: "2023-10-24", amount: "₹5.00", status: "Completed" },
+    { id: "ORD004", service: "Twitter Retweets", date: "2023-10-23", amount: "₹15.00", status: "Canceled" },
 ]
 
 export default function OrdersPage() {
