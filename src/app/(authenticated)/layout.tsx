@@ -66,7 +66,7 @@ export default function AuthenticatedLayout({
                         {userProfile?.isEmployee && (
                            <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button variant="outline" className="hidden sm:flex">
+                                <Button variant="outline">
                                   <Building className="mr-2 h-4 w-4" />
                                   Hexa Vision
                                 </Button>
