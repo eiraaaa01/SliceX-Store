@@ -83,7 +83,7 @@ export default function DraggableHomeButton() {
       variant="default"
       size="icon"
       className={cn(
-        'z-50 h-14 w-14 rounded-full shadow-lg transition-all duration-300 cursor-grab active:cursor-grabbing'
+        'z-50 h-14 w-14 rounded-full shadow-lg cursor-grab active:cursor-grabbing'
       )}
     >
       <Home className="h-6 w-6" />
