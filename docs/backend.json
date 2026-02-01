@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user of Hexa Vision.",
+      "description": "Represents a user of the store.",
       "properties": {
         "id": {
           "type": "string",
@@ -42,77 +42,6 @@
         "registrationDate"
       ]
     },
-    "SmmService": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "SmmService",
-      "type": "object",
-      "description": "Represents an SMM service offered by Hexa Vision.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the SMM service."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the SMM service."
-        },
-        "description": {
-          "type": "string",
-          "description": "A description of the SMM service."
-        },
-        "price": {
-          "type": "number",
-          "description": "The price of the SMM service."
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "description",
-        "price"
-      ]
-    },
-    "Order": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Order",
-      "type": "object",
-      "description": "Represents an order placed by a user for an SMM service.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the order."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N Order)"
-        },
-        "smmServiceId": {
-          "type": "string",
-          "description": "Reference to SmmService. (Relationship: SmmService 1:N Order)"
-        },
-        "quantity": {
-          "type": "number",
-          "description": "The quantity of the SMM service ordered."
-        },
-        "orderDate": {
-          "type": "string",
-          "description": "The date and time the order was placed.",
-          "format": "date-time"
-        },
-        "status": {
-          "type": "string",
-          "description": "The status of the order (e.g., pending, processing, completed)."
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "smmServiceId",
-        "quantity",
-        "orderDate",
-        "status"
-      ]
-    },
     "Username": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Username",
@@ -127,14 +56,6 @@
       "required": [
         "uid"
       ]
-    },
-    "role_admin": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Admin Role",
-      "type": "object",
-      "description": "An empty object whose existence at /roles_admin/{userId} grants admin privileges.",
-      "properties": {},
-      "additionalProperties": false
     }
   },
   "auth": {
@@ -153,65 +74,7 @@
           "schema": {
             "$ref": "#/backend/entities/User"
           },
-          "description": "Stores user data. Allows users to read and write their own data based on their userId.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/smm_services/{smmServiceId}",
-        "definition": {
-          "entityName": "SmmService",
-          "schema": {
-            "$ref": "#/backend/entities/SmmService"
-          },
-          "description": "Stores SMM service data.  Any authenticated user can read.  Only admins can create, update, and delete. Admin status is determined by document existence in /roles_admin/{userId}.",
-          "params": [
-            {
-              "name": "smmServiceId",
-              "description": "The unique identifier of the SMM service."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/orders/{orderId}",
-        "definition": {
-          "entityName": "Order",
-          "schema": {
-            "$ref": "#/backend/entities/Order"
-          },
-          "description": "Stores orders placed by users. Includes denormalized 'userId' for authorization independence, allowing validation of order ownership without 'get()' calls.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user who placed the order."
-            },
-            {
-              "name": "orderId",
-              "description": "The unique identifier of the order."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/roles_admin/{userId}",
-        "definition": {
-          "entityName": "role_admin",
-          "schema": {
-            "$ref": "#/backend/entities/role_admin"
-          },
-          "description": "Indicates admin status. The presence of a document at this path grants admin privileges.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            }
-          ]
+          "description": "Stores user data. Allows users to read and write their own data based on their userId."
         }
       },
       {
@@ -221,16 +84,9 @@
           "schema": {
             "$ref": "#/backend/entities/Username"
           },
-          "description": "Stores unique usernames to prevent duplicates. The document ID is the username. Client-side creation is allowed via transaction but updates and deletes are disabled.",
-          "params": [
-            {
-              "name": "username",
-              "description": "The unique user-chosen name, stored in lowercase."
-            }
-          ]
+          "description": "Stores unique usernames to prevent duplicates. The document ID is the username. Client-side creation is allowed via transaction but updates and deletes are disabled."
         }
       }
-    ],
-    "reasoning": "The Firestore structure is designed to ensure security, scalability, and ease of debugging, adhering to the principles of Authorization Independence, Clarity of Intent, DBAC, and QAPs. It uses denormalization to avoid `get()` calls in security rules and structural segregation to maintain a homogeneous security posture within collections.\n\n- **Users:** User data is stored in a path-based structure (`/users/{userId}`). This enforces clear ownership.  `isEmailVerified` is included as a top-level property to allow rules to quickly verify email verification status. A user can only `read` and `write` their own document.\n- **SmmServices:** SMM services are stored in a collection `/smm_services`. Any authenticated user can `read` the data. Only admins can `create`, `update`, and `delete` them. Admin status is determined by the presence of a document in `/roles_admin/{userId}`.\n- **Orders:** Orders are stored within the user's document using a hierarchical path (`/users/{userId}/orders/{orderId}`). This structure represents the `User 1:N Order` relationship. This allows secure access to the orders. The `userId` is denormalized to ensure Authorization Independence for orders. This allows security rules to efficiently determine if a user owns the order.\n- **Usernames:** To enforce username uniqueness without allowing a `list` operation on the `/users` collection, a separate `/usernames/{username}` collection is used. This provides a secure and scalable way to check for and claim a username during registration.\n\n**Authorization Independence and QAPs:**\n- Authorization Independence is achieved by denormalizing the `userId` in the `/users/{userId}/orders/{orderId}` collection. This eliminates the need for `get()` calls in security rules to verify ownership.  \n- QAPs are supported through structural segregation. Each collection has a specific security profile.  The `/smm_services` collection only allows admin `create`, `update`, `delete` operations, while allowing any authenticated user to `read`. The `/users/{userId}` collection only allows each user to `read` and `write` their own information. List operations are secure because the rules ensure that only authorized data is returned.  The path-based ownership for `/users/{userId}/orders/{orderId}` also ensures QAPs; only the user can list their orders.\n"
+    ]
   }
 }
