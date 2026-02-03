@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/sheet";
 import { useCart } from "@/context/CartContext";
 import { ScrollArea } from "./ui/scroll-area";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Minus, Plus } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 import Image from "next/image";
 import { Button } from "./ui/button";
 
 export default function Cart() {
-  const { cartItems, totalPrice, isCartLoading, removeFromCart } = useCart();
+  const { cartItems, totalPrice, isCartLoading, removeFromCart, updateQuantity, addToCart } = useCart();
 
   return (
     <SheetContent className="flex flex-col w-full sm:max-w-md bg-[#0f1220] border-l border-border p-6">
@@ -24,21 +24,31 @@ export default function Cart() {
       
       {isCartLoading ? (
          <div className="flex flex-col gap-6 my-4 flex-grow">
-            <div className="flex items-center gap-4">
-                <Skeleton className="h-16 w-16 rounded-md" />
+            <div className="flex items-start gap-4">
+                <Skeleton className="h-16 w-16 rounded-md flex-shrink-0" />
                 <div className="flex-grow space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/4" />
-                </div>
-                <Skeleton className="h-4 w-1/5" />
-            </div>
-            <div className="flex items-center gap-4">
-                <Skeleton className="h-16 w-16 rounded-md" />
-                <div className="flex-grow space-y-2">
+                    <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-2/3" />
-                    <Skeleton className="h-4 w-1/3" />
+                    <div className="flex items-center gap-2 mt-2">
+                        <Skeleton className="h-6 w-6 rounded-sm" />
+                        <Skeleton className="h-4 w-4" />
+                        <Skeleton className="h-6 w-6 rounded-sm" />
+                    </div>
                 </div>
-                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-5 w-1/5" />
+            </div>
+            <div className="flex items-start gap-4">
+                <Skeleton className="h-16 w-16 rounded-md flex-shrink-0" />
+                <div className="flex-grow space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                    <div className="flex items-center gap-2 mt-2">
+                        <Skeleton className="h-6 w-6 rounded-sm" />
+                        <Skeleton className="h-4 w-4" />
+                        <Skeleton className="h-6 w-6 rounded-sm" />
+                    </div>
+                </div>
+                <Skeleton className="h-5 w-1/5" />
             </div>
          </div>
       ) : cartItems.length > 0 ? (
@@ -58,7 +68,25 @@ export default function Cart() {
                   </div>
                   <div className="flex-grow">
                     <p className="font-medium line-clamp-2">{item.name}</p>
-                    <p className="text-muted-foreground mt-1">Qty: {item.quantity}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      >
+                          <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="font-medium text-sm w-4 text-center">{item.quantity}</span>
+                      <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6"
+                          onClick={() => addToCart(item)}
+                      >
+                          <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
                     <Button
                       variant="link"
                       className="text-destructive hover:text-destructive h-auto p-0 text-xs mt-1"
