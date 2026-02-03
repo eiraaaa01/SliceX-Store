@@ -100,7 +100,7 @@ export default function HexaVisionLayout({
         </SidebarHeader>
         <SidebarContent>
             <SidebarMenu>
-                {isAdmin && (
+                {panelName === "Admin Panel" && isAdmin && (
                   <>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild isActive={isActive('/hexavision/dashboard')}>
@@ -120,7 +120,7 @@ export default function HexaVisionLayout({
                     </SidebarMenuItem>
                   </>
                 )}
-                 {isEmployee && (
+                 {panelName === "Hexa Vision" && isEmployee && (
                     <>
                         {/* The Hexa Vision employee panel is under construction.
                             No navigation items are needed here for now.
