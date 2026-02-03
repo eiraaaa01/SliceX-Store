@@ -64,6 +64,7 @@ export default function AdminProductsPage() {
     if (confirm('Are you sure you want to delete this product?')) {
         await deleteDoc(doc(firestore, 'products', productId));
         toast({ title: "Product Deleted" });
+        window.location.reload();
     }
   });
 
@@ -159,6 +160,7 @@ function ProductDialog({ product, onClose }: { product: Product | null, onClose:
 
         toast({ title: product ? "Product Updated" : "Product Created" });
         onClose();
+        window.location.reload();
     });
 
     return (
