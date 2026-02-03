@@ -11,9 +11,10 @@ import { ScrollArea } from "./ui/scroll-area";
 import { ShoppingCart } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 import Image from "next/image";
+import { Button } from "./ui/button";
 
 export default function Cart() {
-  const { cartItems, totalPrice, isCartLoading } = useCart();
+  const { cartItems, totalPrice, isCartLoading, removeFromCart } = useCart();
 
   return (
     <SheetContent className="flex flex-col w-full sm:max-w-md bg-[#0f1220] border-l border-border p-6">
@@ -58,6 +59,13 @@ export default function Cart() {
                   <div className="flex-grow">
                     <p className="font-medium line-clamp-2">{item.name}</p>
                     <p className="text-muted-foreground mt-1">Qty: {item.quantity}</p>
+                    <Button
+                      variant="link"
+                      className="text-destructive hover:text-destructive h-auto p-0 text-xs mt-1"
+                      onClick={() => removeFromCart(item.id)}
+                    >
+                      Remove
+                    </Button>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
