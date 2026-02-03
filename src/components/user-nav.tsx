@@ -156,14 +156,14 @@ export default function UserNav() {
                             <AlertDialogTrigger asChild>
                             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                 <Building className="mr-2 h-4 w-4" />
-                                <span>Hexa Vision</span>
+                                <span>Employee Panel</span>
                             </DropdownMenuItem>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Switch to Hexa Vision?</AlertDialogTitle>
+                                <AlertDialogTitle>Switch to Employee Panel?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                You are about to be redirected to the Hexa Vision SMM panel. Do you want to continue?
+                                You are about to be redirected to the employee panel. Do you want to continue?
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

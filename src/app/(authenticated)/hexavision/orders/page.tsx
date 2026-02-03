@@ -6,7 +6,7 @@ export default function OrdersPage() {
       <Wrench className="h-16 w-16 text-muted-foreground mb-4" />
       <h1 className="text-3xl font-bold tracking-tight">Under Development</h1>
       <p className="text-muted-foreground mt-2">
-        The Hexa Vision panel is currently being built. Please check back later.
+        The Employee panel is currently being built. Please check back later.
       </p>
     </div>
   );

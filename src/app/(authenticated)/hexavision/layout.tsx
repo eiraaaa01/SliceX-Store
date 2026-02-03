@@ -11,7 +11,7 @@ import {
     SidebarTrigger,
     SidebarFooter,
 } from "@/components/ui/sidebar";
-import { HexaVisionLogo } from "@/components/hexavision-logo";
+import { Logo } from "@/components/logo";
 import { LayoutDashboard, Store, Package } from "lucide-react";
 import Link from 'next/link';
 import { usePathname, useRouter } from "next/navigation";
@@ -46,16 +46,16 @@ export default function HexaVisionLayout({
     const adminPaths = ['/hexavision/dashboard', '/hexavision/products'];
     const employeePaths = ['/hexavision/services', '/hexavision/orders'];
 
-    if (employeePaths.some(path => pathname.startsWith(path))) {
-        return "Hexa Vision";
-    }
     if (adminPaths.some(path => pathname.startsWith(path))) {
         return "Admin Panel";
+    }
+    if (employeePaths.some(path => pathname.startsWith(path))) {
+        return "Employee Panel";
     }
     
     // Fallback for the root /hexavision page before redirect
     if (isAdmin) return "Admin Panel";
-    if (isEmployee) return "Hexa Vision";
+    if (isEmployee) return "Employee Panel";
 
     return "";
   }
@@ -96,7 +96,7 @@ export default function HexaVisionLayout({
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-            <HexaVisionLogo />
+            <Logo />
         </SidebarHeader>
         <SidebarContent>
             <SidebarMenu>
@@ -120,9 +120,9 @@ export default function HexaVisionLayout({
                     </SidebarMenuItem>
                   </>
                 )}
-                 {panelName === "Hexa Vision" && isEmployee && (
+                 {panelName === "Employee Panel" && isEmployee && (
                     <>
-                        {/* The Hexa Vision employee panel is under construction.
+                        {/* The Employee panel is under construction.
                             No navigation items are needed here for now.
                             This block is preserved to maintain the role-based logic
                             for accessing the panel itself. */}
