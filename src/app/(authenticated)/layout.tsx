@@ -21,23 +21,9 @@ export default function AuthenticatedLayout({
   const { cartCount } = useCart();
   const pathname = usePathname();
 
-  const isHexaVisionRoute = pathname.startsWith('/hexavision');
-
   useEffect(() => {
-    if (!isHexaVisionRoute) {
-        document.title = 'SliceX Store';
-    }
-  }, [isHexaVisionRoute, pathname]);
-
-  if (isHexaVisionRoute) {
-    return (
-      <EmailVerificationGate>
-        <ProfileCompletionGate>
-          {children}
-        </ProfileCompletionGate>
-      </EmailVerificationGate>
-    )
-  }
+    document.title = 'SliceX Store';
+  }, [pathname]);
 
   return (
     <EmailVerificationGate>

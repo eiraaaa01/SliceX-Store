@@ -26,7 +26,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { User as UserIcon, LogOut, Settings, Building, ListOrdered, Wallet, MessageSquare, CreditCard } from "lucide-react";
+import { User as UserIcon, LogOut, Settings, ListOrdered, Wallet, MessageSquare, CreditCard } from "lucide-react";
 import Link from 'next/link';
 import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
@@ -124,59 +124,6 @@ export default function UserNav() {
             <DropdownMenuShortcut>Soon</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        
-        {(userProfile?.isAdmin || userProfile?.isEmployee) && (
-            <>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    {userProfile?.isAdmin && (
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                <Building className="mr-2 h-4 w-4" />
-                                <span>Admin Panel</span>
-                            </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Switch to Admin Panel?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                You are about to be redirected to the Admin panel. Do you want to continue?
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => router.push('/hexavision/dashboard')}>Continue</AlertDialogAction>
-                            </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    )}
-                    {userProfile?.isEmployee && (
-                         <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                <Building className="mr-2 h-4 w-4" />
-                                <span>Employee Panel</span>
-                            </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Switch to Employee Panel?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                You are about to be redirected to the employee panel. Do you want to continue?
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => router.push('/hexavision/services')}>Continue</AlertDialogAction>
-                            </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    )}
-                </DropdownMenuGroup>
-            </>
-        )}
-
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
              <Link href="/account" passHref>
