@@ -10,6 +10,7 @@ import { useCart } from "@/context/CartContext";
 import { ScrollArea } from "./ui/scroll-area";
 import { ShoppingCart } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
+import Image from "next/image";
 
 export default function Cart() {
   const { cartItems, totalPrice, isCartLoading } = useCart();
@@ -21,19 +22,46 @@ export default function Cart() {
       </SheetHeader>
       
       {isCartLoading ? (
-         <div className="flex flex-col gap-4 my-4 flex-grow">
-            <div className="flex justify-between items-center"><Skeleton className="h-5 w-3/4" /><Skeleton className="h-5 w-1/5" /></div>
-            <div className="flex justify-between items-center"><Skeleton className="h-5 w-2/3" /><Skeleton className="h-5 w-1/4" /></div>
-            <div className="flex justify-between items-center"><Skeleton className="h-5 w-3/4" /><Skeleton className="h-5 w-1/5" /></div>
+         <div className="flex flex-col gap-6 my-4 flex-grow">
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-16 w-16 rounded-md" />
+                <div className="flex-grow space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-1/4" />
+                </div>
+                <Skeleton className="h-4 w-1/5" />
+            </div>
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-16 w-16 rounded-md" />
+                <div className="flex-grow space-y-2">
+                    <Skeleton className="h-4 w-2/3" />
+                    <Skeleton className="h-4 w-1/3" />
+                </div>
+                <Skeleton className="h-4 w-1/4" />
+            </div>
          </div>
       ) : cartItems.length > 0 ? (
         <>
           <ScrollArea className="flex-grow -mr-6 pr-6">
-            <div className="flex flex-col gap-3 my-4">
+            <div className="flex flex-col gap-6 my-4">
               {cartItems.map((item) => (
-                <div key={item.id} className="flex justify-between items-center text-sm">
-                  <span>{item.name} &times; {item.quantity}</span>
-                  <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+                <div key={item.id} className="flex items-start gap-4 text-sm">
+                  <div className="relative h-16 w-16 rounded-md overflow-hidden border flex-shrink-0">
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
+                  <div className="flex-grow">
+                    <p className="font-medium line-clamp-2">{item.name}</p>
+                    <p className="text-muted-foreground mt-1">Qty: {item.quantity}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
+                  </div>
                 </div>
               ))}
             </div>
