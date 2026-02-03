@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useLoading } from "@/context/LoadingContext";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AdminProductsPage() {
   const firestore = useFirestore();
@@ -138,6 +139,10 @@ function ProductDialog({ product, onClose }: { product: Product | null, onClose:
     const [price, setPrice] = useState(product?.price.toString() || '');
     const [description, setDescription] = useState(product?.description || '');
     const [imageUrl, setImageUrl] = useState(product?.imageUrl || '');
+    const [originalPrice, setOriginalPrice] = useState(product?.originalPrice?.toString() ?? '');
+    const [imageHint, setImageHint] = useState(product?.imageHint || '');
+    const [shippingDays, setShippingDays] = useState(product?.shippingDays?.toString() ?? '');
+    
     const firestore = useFirestore();
     const { toast } = useToast();
     const { withLoading } = useLoading();
@@ -146,12 +151,17 @@ function ProductDialog({ product, onClose }: { product: Product | null, onClose:
         e.preventDefault();
         if (!firestore) return;
 
+        const parsedOriginalPrice = parseFloat(originalPrice);
+        const parsedShippingDays = parseInt(shippingDays, 10);
+
         const productData = {
             name,
             price: parseFloat(price),
             description,
             imageUrl,
-            imageHint: "product " + name.toLowerCase().split(' ').slice(0,2).join(' '),
+            imageHint: imageHint || "product " + name.toLowerCase().split(' ').slice(0,2).join(' '),
+            originalPrice: !isNaN(parsedOriginalPrice) ? parsedOriginalPrice : null,
+            shippingDays: !isNaN(parsedShippingDays) ? parsedShippingDays : null,
         };
 
         const docRef = product ? doc(firestore, 'products', product.id) : doc(collection(firestore, 'products'));
@@ -170,30 +180,44 @@ function ProductDialog({ product, onClose }: { product: Product | null, onClose:
                     <DialogHeader>
                         <DialogTitle>{product ? 'Edit Product' : 'New Product'}</DialogTitle>
                         <DialogDescription>
-                            {product ? 'Make changes to this product.' : 'Add a new product to your store.'}
+                            {product ? 'Fill in the details below to update the product.' : 'Fill in the details below to add a new product.'}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
+                            <Label htmlFor="name">Product Name</Label>
                             <Input id="name" value={name} onChange={e => setName(e.target.value)} required />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="price">Price</Label>
-                            <Input id="price" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
-                        </div>
-                         <div className="grid gap-2">
                             <Label htmlFor="description">Description</Label>
-                            <Input id="description" value={description} onChange={e => setDescription(e.target.value)} required />
+                            <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} required />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="price">Selling Price (₹)</Label>
+                                <Input id="price" type="number" step="0.01" value={price} onChange={e => setPrice(e.target.value)} required />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="originalPrice">Original Price (₹)</Label>
+                                <Input id="originalPrice" type="number" step="0.01" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} />
+                            </div>
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="imageUrl">Image URL</Label>
                             <Input id="imageUrl" value={imageUrl} onChange={e => setImageUrl(e.target.value)} required />
                         </div>
+                         <div className="grid gap-2">
+                            <Label htmlFor="imageHint">Image Hint (for AI)</Label>
+                            <Input id="imageHint" value={imageHint} onChange={e => setImageHint(e.target.value)} />
+                        </div>
+                         <div className="grid gap-2">
+                            <Label htmlFor="shippingDays">Shipping Days</Label>
+                            <Input id="shippingDays" type="number" value={shippingDays} onChange={e => setShippingDays(e.target.value)} />
+                        </div>
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-                        <Button type="submit">Save</Button>
+                        <Button type="submit">Save Product</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
