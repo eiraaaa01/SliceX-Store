@@ -79,7 +79,7 @@ export default function ProductDetailPage() {
                         <AlertTriangle className="h-4 w-4" />
                         <AlertTitle>Site Notice</AlertTitle>
                         <AlertDescription>
-                            We are currently in a testing phase. Feel free to add products to your cart—they will be saved to your account for our official launch on February 3rd.
+                            We are currently in a testing phase. Feel free to add products to your cart—they will be saved to your account for our official launch on February 5th.
                         </AlertDescription>
                     </Alert>
                     <div className="mt-auto">
