@@ -25,6 +25,18 @@ export default function AuthenticatedLayout({
     document.title = 'SliceX Store';
   }, [pathname]);
 
+  const isAdminPage = pathname.startsWith('/admin');
+
+  if (isAdminPage) {
+    return (
+      <EmailVerificationGate>
+        <ProfileCompletionGate>
+          {children}
+        </ProfileCompletionGate>
+      </EmailVerificationGate>
+    );
+  }
+
   return (
     <EmailVerificationGate>
       <ProfileCompletionGate>
