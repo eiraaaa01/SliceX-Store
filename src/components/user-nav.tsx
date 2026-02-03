@@ -26,7 +26,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { User as UserIcon, LogOut, Settings, ListOrdered, Wallet, MessageSquare, CreditCard } from "lucide-react";
+import { User as UserIcon, LogOut, Settings, ListOrdered, Wallet, MessageSquare, CreditCard, Shield } from "lucide-react";
 import Link from 'next/link';
 import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
@@ -126,6 +126,14 @@ export default function UserNav() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+             {userProfile?.isAdmin && (
+                <Link href="/admin" passHref>
+                    <DropdownMenuItem>
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
+                    </DropdownMenuItem>
+                </Link>
+             )}
              <Link href="/account" passHref>
                 <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
