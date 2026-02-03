@@ -6,32 +6,47 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DollarSign, ShoppingCart, Users } from "lucide-react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from 'firebase/firestore';
+import { useFirestore, useCollection, useMemoFirebase, useUser, useDoc } from "@/firebase";
+import { collection, doc } from 'firebase/firestore';
 import { useLoading } from "@/context/LoadingContext";
 import { useEffect } from "react";
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const firestore = useFirestore();
   const { showLoading, hideLoading } = useLoading();
+  const { user, isUserLoading: isAuthLoading } = useUser();
+  const router = useRouter();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isAdmin?: boolean}>(userDocRef);
 
   const usersCollectionRef = useMemoFirebase(() => {
     if (!firestore) return null;
     return collection(firestore, 'users');
   }, [firestore]);
 
-  const { data: users, isLoading } = useCollection(usersCollectionRef);
+  const { data: users, isLoading: areUsersLoading } = useCollection(usersCollectionRef);
+
+  const isLoading = isAuthLoading || isProfileLoading || areUsersLoading;
 
   useEffect(() => {
     if (isLoading) {
       showLoading();
       return () => hideLoading();
+    } else {
+      if (userProfile && !userProfile.isAdmin) {
+          router.replace('/home');
+      }
     }
-  }, [isLoading, showLoading, hideLoading]);
+  }, [isLoading, userProfile, router, showLoading, hideLoading]);
 
   const totalUsers = users?.length ?? 0;
 
-  if (isLoading) {
+  if (isLoading || !userProfile?.isAdmin) {
     return null;
   }
 

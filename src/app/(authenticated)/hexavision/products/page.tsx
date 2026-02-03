@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { useFirestore, useCollection, useMemoFirebase, useUser, useDoc } from "@/firebase";
 import { collection, doc, setDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { Product } from "@/lib/types";
 import { PlusCircle, MoreHorizontal, Pencil, Trash2, Package } from "lucide-react";
@@ -45,6 +45,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useLoading } from "@/context/LoadingContext";
+import { useRouter } from 'next/navigation';
 
 const emptyProduct: Partial<Product> = {
   name: '',
@@ -58,23 +59,38 @@ const emptyProduct: Partial<Product> = {
 
 export default function ProductsPage() {
   const firestore = useFirestore();
+  const { user, isUserLoading: isAuthLoading } = useUser();
+  const router = useRouter();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<{isAdmin?: boolean}>(userDocRef);
+
   const productsCollectionRef = useMemoFirebase(() => {
     if (!firestore) return null;
     return collection(firestore, 'products');
   }, [firestore]);
 
-  const { data: products, isLoading } = useCollection<Product>(productsCollectionRef);
+  const { data: products, isLoading: areProductsLoading } = useCollection<Product>(productsCollectionRef);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const { toast } = useToast();
   const { showLoading, hideLoading } = useLoading();
   
+  const isLoading = isAuthLoading || isProfileLoading || areProductsLoading;
+
   useEffect(() => {
     if (isLoading) {
       showLoading();
       return () => hideLoading();
+    } else {
+        if (userProfile && !userProfile.isAdmin) {
+            router.replace('/home');
+        }
     }
-  }, [isLoading, showLoading, hideLoading]);
+  }, [isLoading, userProfile, router, showLoading, hideLoading]);
 
   const handleAddNew = () => {
     setEditingProduct(emptyProduct);
@@ -148,7 +164,7 @@ export default function ProductsPage() {
     setEditingProduct(prev => ({...prev, [id]: parseFloat(value) || 0}));
   }
 
-  if (isLoading) {
+  if (isLoading || !userProfile?.isAdmin) {
     return null;
   }
 
